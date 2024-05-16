@@ -18,60 +18,52 @@
 
 'use strict';
 
-const Homey = require('homey');
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-const Util = require('./../../lib/util.js');
 
 
 class BroadlinkMP1Driver extends BroadlinkDriver {
 
-	mp1_check_condition_on( args, state ) {
-		return args.device.check_condition_on( args.switchID );
+	mp1_check_condition_on(args, state) {
+		return args.device.check_condition_on(args.switchID);
 	}
 
-	mp1_do_action_on(args,state) {
-		return args.device.do_action_on( args.switchID )
+	mp1_do_action_on(args, state) {
+		return args.device.do_action_on(args.switchID)
 	}
 
-	mp1_do_action_off(args,state) {
-		return args.device.do_action_off( args.switchID )
+	mp1_do_action_off(args, state) {
+		return args.device.do_action_off(args.switchID)
 	}
 
 
-	onInit() {
+	async onInit() {
 		super.onInit({
 			CompatibilityID: 0x4EB5  // MP1
 		});
 
-		this.trigger_toggle = new Homey.FlowCardTriggerDevice('mp1_onoff_change')
-			.register()
-			.registerRunListener( (args,state,callback) => {
-				callback( null, (args.switchID == state.switchID ))
+		this.trigger_toggle = this.homey.flow.getDeviceTriggerCard('mp1_onoff_change')
+			.registerRunListener((args, state, callback) => {
+				callback(null, (args.switchID == state.switchID))
 			})
-		this.trigger_on = new Homey.FlowCardTriggerDevice('mp1_onoff_on')
-			.register()
-			.registerRunListener( (args,state,callback) => {
-				callback( null, (args.switchID == state.switchID ))
+		this.trigger_on = this.homey.flow.getDeviceTriggerCard('mp1_onoff_on')
+			.registerRunListener((args, state, callback) => {
+				callback(null, (args.switchID == state.switchID))
 			})
-		this.trigger_off = new Homey.FlowCardTriggerDevice('mp1_onoff_off')
-			.register()
-			.registerRunListener( (args,state,callback) => {
-				callback( null, (args.switchID == state.switchID ))
+		this.trigger_off = this.homey.flow.getDeviceTriggerCard('mp1_onoff_off')
+			.registerRunListener((args, state, callback) => {
+				callback(null, (args.switchID == state.switchID))
 			})
 
-		this.mp1_condition_on = new Homey.FlowCardCondition('mp1_onoff');
+		this.mp1_condition_on = this.homey.flow.getConditionCard('mp1_onoff');
 		this.mp1_condition_on
-			.register()
-			.registerRunListener(this.mp1_check_condition_on.bind(this) )
+			.registerRunListener(this.mp1_check_condition_on.bind(this))
 
-		this.mp1_action_on = new Homey.FlowCardAction('mp1_onoff_on');
+		this.mp1_action_on = this.homey.flow.getActionCard('mp1_onoff_on');
 		this.mp1_action_on
-			.register()
 			.registerRunListener(this.mp1_do_action_on.bind(this))
 
-		this.mp1_action_off = new Homey.FlowCardAction('mp1_onoff_off');
+		this.mp1_action_off = this.homey.flow.getActionCard('mp1_onoff_off');
 		this.mp1_action_off
-			.register()
 			.registerRunListener(this.mp1_do_action_off.bind(this))
 
 	}

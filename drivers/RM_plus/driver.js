@@ -23,9 +23,9 @@ const BroadlinkRM3miniDriver = require('./../RM3_mini/driver');
 
 class BroadlinkRMPlusDriver extends BroadlinkRM3miniDriver {
 
-	onInit() {
+	async onInit() {
 		super.onInit();
-		this.setCompatibilityID( 0x272A );  // RM Pro Plus 2
+		this.setCompatibilityID(0x272A);  // RM Pro Plus 2
 	}
 }
 

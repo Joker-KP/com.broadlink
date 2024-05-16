@@ -1,0 +1,83 @@
+{
+  "id": "com.broadlink",
+  "version": "3.1.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "name": {
+    "en": "Broadlink"
+  },
+  "brandColor": "#20df60",
+  "homeyCommunityTopicId": 6389,
+  "description": {
+    "en": "Adds support for Broadlink devices.",
+    "nl": "Voegt ondersteuning voor Broadlink apparaten toe."
+  },
+  "category": ["appliances", "lights", "climate"],
+  "permissions": ["homey:manager:speech-output"],
+  "images": {
+    "large": "/assets/images/large.jpg",
+    "small": "/assets/images/small.jpg"
+  },
+  "author": {
+    "name": "Remko Wensveen",
+    "email": "r966430@gmail.com"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Finn Kristian Meland",
+        "email": "fkmeland@gmail.com"
+      }
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "fkmeland"
+      },
+      "githubSponsors": {
+        "username": "fkmeland"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/fkmeland/com.broadlink/issues"
+  },
+  "source": "https://github.com/fkmeland/com.broadlink",
+  "tags": {
+    "en": [
+      "Home",
+      "IR",
+      "remote control",
+      "infrared",
+      "WiFi",
+      "433",
+      "433MHz",
+      "environment Sensor",
+      "thermostat",
+      "temperature",
+      "luminance",
+      "humidity",
+      "energy",
+      "power",
+      "curtains"
+    ],
+    "nl": [
+      "Huis",
+      "IR",
+      "afstandsbediening",
+      "infrarood",
+      "WiFi",
+      "433",
+      "433MHz",
+      "omgevingssensor",
+      "thermostaat",
+      "temperatuur",
+      "helderheid",
+      "vochtigheid",
+      "energie",
+      "vermogen",
+      "gordijnen"
+    ]
+  }
+}

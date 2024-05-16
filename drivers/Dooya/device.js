@@ -18,20 +18,18 @@
 
 'use strict';
 
-//const Homey = require('homey');
-const Util = require('./../../lib/util.js');
 const BroadlinkDevice = require('./../../lib/BroadlinkDevice');
 
 
 class DooyaDevice extends BroadlinkDevice {
 
-	onInit() {
+	async onInit() {
 		super.onInit();
 		this.registerCapabilityListener('button.open', this.onCapabilityOpen.bind(this));
 		this.registerCapabilityListener('button.close', this.onCapabilityClose.bind(this));
 		this.registerCapabilityListener('button.stop', this.onCapabilityStop.bind(this));
-		
-		if( this.getCapabilities().indexOf('windowcoverings_closed') > -1 ) {
+
+		if (this.getCapabilities().indexOf('windowcoverings_closed') > -1) {
 			this.registerCapabilityListener('windowcoverings_closed', this.onCapabilityWcClosed.bind(this))
 		}
 		else {
@@ -39,53 +37,53 @@ class DooyaDevice extends BroadlinkDevice {
 		}
 	}
 
-	_set_state( closedState ) {
-		if( this.getCapabilities().indexOf('windowcoverings_closed') > -1 ) {
-			this.setCapabilityValue( 'windowcoverings_closed', closedState )
+	_set_state(closedState) {
+		if (this.getCapabilities().indexOf('windowcoverings_closed') > -1) {
+			this.setCapabilityValue('windowcoverings_closed', closedState)
 		}
 		else {
 			let drv = this.getDriver();
-			if( closedState ) {
-				drv.trigger_closed.trigger(this,{},{})
+			if (closedState) {
+				drv.trigger_closed.trigger(this, {}, {})
 			}
 			else {
-				drv.trigger_open.trigger(this,{},{})
+				drv.trigger_open.trigger(this, {}, {})
 			}
 			this.windowcoverings_closed = closedState
 		}
 	}
-	
+
 	/**
 	 * @return TRUE if 'closed', FALSE if 'open'  
 	 */
 	_get_state() {
-		if( this.getCapabilities().indexOf('windowcoverings_closed') > -1 ) {
-			return this.getCapabilityValue( 'windowcoverings_closed' )
+		if (this.getCapabilities().indexOf('windowcoverings_closed') > -1) {
+			return this.getCapabilityValue('windowcoverings_closed')
 		}
 		else {
 			return this.windowcoverings_closed
 		}
 	}
 
-	
+
 	check_condition_closed() {
-		return Promise.resolve( this._get_state() )
+		return Promise.resolve(this._get_state())
 	}
 
 	do_action_close() {
-		this._set_state( true )
-		this._sendCommand( 0x02, 0x00 );
+		this._set_state(true)
+		this._sendCommand(0x02, 0x00);
 		return Promise.resolve(true)
 	}
 
 	do_action_open() {
-		this._set_state( false )
-		this._sendCommand( 0x01, 0x00 );
+		this._set_state(false)
+		this._sendCommand(0x01, 0x00);
 		return Promise.resolve(true)
 	}
 
 	do_action_toggle() {
-		if( this._get_state() ) {
+		if (this._get_state()) {
 			return this.do_action_open()
 		}
 		else {
@@ -99,41 +97,41 @@ class DooyaDevice extends BroadlinkDevice {
 	 * @return  if cmd==get_percentage: the opened percentage
 	 *          otherwise: nothing
 	 */
-	 async _sendCommand( cmd1, cmd2 ) {
+	async _sendCommand(cmd1, cmd2) {
 		try {
-			let res = await this._communicate.dooya_set_state( cmd1, cmd2 );
+			let res = await this._communicate.dooya_set_state(cmd1, cmd2);
 			return res
 		}
-		catch( err ) { Util.debugLog("**> DooyaDevice._sendCommand " + cmd1 + "."+ cmd2 + ": error = "+ err); }
+		catch (err) { this._utils.debugLog("**> DooyaDevice._sendCommand " + cmd1 + "." + cmd2 + ": error = " + err); }
 	}
 
-	async onCapabilityWcClosed( state ) {
-		if( state ){
-			this._sendCommand( 0x01, 0x00 );
+	async onCapabilityWcClosed(state) {
+		if (state) {
+			this._sendCommand(0x01, 0x00);
 		}
 		else {
-			this._sendCommand( 0x02, 0x00 );
+			this._sendCommand(0x02, 0x00);
 		}
 	}
 
-	async onCapabilityOpen( state ) {
-		this._set_state( false )
-		this._sendCommand( 0x01, 0x00 );
+	async onCapabilityOpen(state) {
+		this._set_state(false)
+		this._sendCommand(0x01, 0x00);
 	}
 
-	async onCapabilityClose( state ) {
-		this._set_state( true )
-		this._sendCommand( 0x02, 0x00 );
+	async onCapabilityClose(state) {
+		this._set_state(true)
+		this._sendCommand(0x02, 0x00);
 	}
 
-	async onCapabilityStop( state ) {
-		this._sendCommand( 0x03, 0x00 );
+	async onCapabilityStop(state) {
+		this._sendCommand(0x03, 0x00);
 	}
-	
+
 	async get_percentage(self) {
 		return await this._sendCommand(0x06, 0x5d)
 	}
-	
+
 }
 
 module.exports = DooyaDevice;

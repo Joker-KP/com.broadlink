@@ -19,16 +19,15 @@
 'use strict';
 
 const Homey = require('homey');
-//const Util = require('./../lib/util.js');
 
 /**
  * Main entry point for app.
  */
 class BroadlinkApp extends Homey.App {
 
-	onInit() {
-		
-		Homey.on('memwarn', () => {
+	async onInit() {
+
+		this.homey.on('memwarn', () => {
 			// simply ignore it
 		})
 	}

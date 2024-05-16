@@ -20,44 +20,41 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 const Homey = require('homey');
-const Util = require('./../../lib/util.js');
+const BroadlinkUtils = require('./../../lib/BroadlinkUtils.js');
 
 
 class HysenDriver extends BroadlinkDriver {
 
-	check_condition_parentalmode_on( args, state ) {
+	check_condition_parentalmode_on(args, state) {
 		return args.device.check_parentalmode_on()
 	}
 
-	do_action_parentalmode_on(args,state) {
+	do_action_parentalmode_on(args, state) {
 		return args.device.do_action_parentalmode_on()
 	}
 
-	do_action_parentalmode_off(args,state) {
+	do_action_parentalmode_off(args, state) {
 		return args.device.do_action_parentalmode_off()
 	}
 
-	onInit() {
+	async onInit() {
 		super.onInit({
 			CompatibilityID: 0x4EAD   // HYSEN
 		});
-		
-		// temperature FlowCards are added automatically
-		
-		this.trigger_parentalmode_on = new Homey.FlowCardTriggerDevice('hysen_parentalmode_on').register()
-		this.trigger_parentalmode_off = new Homey.FlowCardTriggerDevice('hysen_parentalmode_off').register()
-		this.trigger_parentalmode_toggle = new Homey.FlowCardTriggerDevice('hysen_parentalmode_toggle').register()
-		
-		this.condition_parentalmode_on = new Homey.FlowCardCondition('hysen_parentalmode')
-			.register()
-			.registerRunListener(this.check_condition_parentalmode_on.bind(this) )
 
-		this.action_parentalmode_on = new Homey.FlowCardAction('hysen_parentalmode_set_on')
-			.register()
+		// temperature FlowCards are added automatically
+
+		this.trigger_parentalmode_on = this.homey.flow.getDeviceTriggerCard('hysen_parentalmode_on')
+		this.trigger_parentalmode_off = this.homey.flow.getDeviceTriggerCard('hysen_parentalmode_off')
+		this.trigger_parentalmode_toggle = this.homey.flow.getDeviceTriggerCard('hysen_parentalmode_toggle')
+
+		this.condition_parentalmode_on = this.homey.flow.getConditionCard('hysen_parentalmode')
+			.registerRunListener(this.check_condition_parentalmode_on.bind(this))
+
+		this.action_parentalmode_on = this.homey.flow.getActionCard('hysen_parentalmode_set_on')
 			.registerRunListener(this.do_action_parentalmode_on.bind(this))
 
-		this.action_parentalmode_off = new Homey.FlowCardAction('hysen_parentalmode_set_off')
-			.register()
+		this.action_parentalmode_off = this.homey.flow.getActionCard('hysen_parentalmode_set_off')
 			.registerRunListener(this.do_action_parentalmode_off.bind(this))
 	}
 
@@ -66,20 +63,20 @@ class HysenDriver extends BroadlinkDriver {
 	 * Communication to the frontend is done via events => socket.emit('x')
 	 *
 	 */
-	onPair(socket) {
-		super.onPair(socket);
-		
-		socket.on('properties_set', function( data, callback ) {
+	onPair(session) {
+		super.onPair(session);
+
+		session.setHandler('properties_set', async (data) => {
 			// data = { 'externalSensor': val, 'deviceList': deviceData }
-			
-			if( ! data[ 'externalSensor' ] ) {
+
+			if (!data['externalSensor']) {
 				// override capabilities in app.json
 				data['deviceList'][0]['capabilities'] = [
 					"measure_temperature",
 					"target_temperature",
 					"parental_mode"
-					]
-				data['deviceList'][0]['capabilitiesOptions' ] = {
+				]
+				data['deviceList'][0]['capabilitiesOptions'] = {
 					"target_temperature": {
 						"min": 5,
 						"max": 30,
@@ -87,8 +84,8 @@ class HysenDriver extends BroadlinkDriver {
 					}
 				}
 			}
-			return callback(null,data['deviceList']);
-		}.bind(this));
+			return data['deviceList'];
+		});
 	}
 }
 

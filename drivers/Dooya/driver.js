@@ -18,50 +18,44 @@
 
 'use strict';
 
-const Homey = require('homey');
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-//const Util = require('./../../lib/util.js');
 
 
 class DooyaDriver extends BroadlinkDriver {
 
 
-	check_condition_closed( args, state ) {
+	check_condition_closed(args, state) {
 		return args.device.check_condition_closed()
 	}
 
-	do_action_close(args,state) {
+	do_action_close(args, state) {
 		return args.device.do_action_close()
 	}
 
-	do_action_open(args,state) {
+	do_action_open(args, state) {
 		return args.device.do_action_open()
 	}
-	
-	do_action_toggle(args,state) {
+
+	do_action_toggle(args, state) {
 		return args.device.do_action_toggle()
 	}
 
-	onInit() {
+	async onInit() {
 		super.onInit({
 			CompatibilityID: 0x4E4D   // DOOYA
 		});
-		
-		this.trigger_open = new Homey.FlowCardTriggerDevice('dooya_opened').register()
-		this.trigger_closed = new Homey.FlowCardTriggerDevice('dooya_closed').register()
 
-		this.condition_closed = new Homey.FlowCardCondition('dooya_closed')
-			.register()
-			.registerRunListener(this.check_condition_closed.bind(this) )
+		this.trigger_open = this.homey.flow.getDeviceTriggerCard('dooya_opened')
+		this.trigger_closed = this.homey.flow.getDeviceTriggerCard('dooya_closed')
 
-		this.action_close = new Homey.FlowCardAction('dooya_close')
-			.register()
+		this.condition_closed = this.homey.flow.getConditionCard('dooya_closed')
+			.registerRunListener(this.check_condition_closed.bind(this))
+
+		this.action_close = this.homey.flow.getActionCard('dooya_close')
 			.registerRunListener(this.do_action_close.bind(this))
-		this.action_open = new Homey.FlowCardAction('dooya_open')
-			.register()
+		this.action_open = this.homey.flow.getActionCard('dooya_open')
 			.registerRunListener(this.do_action_open.bind(this))
-		this.action_toggle = new Homey.FlowCardAction('dooya_toggle')
-			.register()
+		this.action_toggle = this.homey.flow.getActionCard('dooya_toggle')
 			.registerRunListener(this.do_action_toggle.bind(this))
 	}
 
@@ -71,23 +65,23 @@ class DooyaDriver extends BroadlinkDriver {
 	 * Communication to the frontend is done via events => socket.emit('x')
 	 *
 	 */
-	onPair(socket) {
-		super.onPair(socket);
-		//Util.debugLog('dooya.onPair')
-		
-		socket.on('properties_set', function( data, callback ) {
+	onPair(session) {
+		super.onPair(session);
+		//this._utils.debugLog('dooya.onPair')
+
+		session.setHandler('properties_set', async (data) => {
 			// data = { 'deviceList': deviceData }
-			
+
 			data['deviceList'][0]['capabilities'] = [
 				"windowcoverings_closed",
-				"button.open", 
-				"button.close", 
-				"button.stop" 
-				]
+				"button.open",
+				"button.close",
+				"button.stop"
+			]
 
-			return callback(null,data['deviceList']);
-		}.bind(this));
+			return data['deviceList'];
+		});
 	}
-	
+
 }
 module.exports = DooyaDriver;

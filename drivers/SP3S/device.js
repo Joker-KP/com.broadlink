@@ -18,8 +18,6 @@
 
 'use strict';
 
-const Homey = require('homey');
-const Util = require('./../../lib/util.js');
 const SP2Device = require('./../SP2/device');
 
 

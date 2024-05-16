@@ -19,44 +19,40 @@
 'use strict';
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-const Homey = require('homey');
 
 
 class BroadlinkSP1Driver extends BroadlinkDriver {
 
 
-	sp1_check_condition_on( args, state ) {
+	sp1_check_condition_on(args, state) {
 		return args.device.check_condition_on()
 	}
 
-	sp1_do_action_on(args,state) {
+	sp1_do_action_on(args, state) {
 		return args.device.do_action_on()
 	}
 
-	sp1_do_action_off(args,state) {
+	sp1_do_action_off(args, state) {
 		return args.device.do_action_off()
 	}
 
 
-	onInit() {
+	async onInit() {
 		super.onInit({
 			CompatibilityID: 0x0000  // SP1
 		});
 
-		this.trigger_toggle = new Homey.FlowCardTriggerDevice('sp1_onoff_change').register()
-		this.trigger_on = new Homey.FlowCardTriggerDevice('sp1_onoff_on').register()
-		this.trigger_off = new Homey.FlowCardTriggerDevice('sp1_onoff_off').register()
+		this.trigger_toggle = this.homey.flow.getDeviceTriggerCard('sp1_onoff_change')
+		this.trigger_on = this.homey.flow.getDeviceTriggerCard('sp1_onoff_on')
+		this.trigger_off = this.homey.flow.getDeviceTriggerCard('sp1_onoff_off')
 
-		this.sp1_condition_on = new Homey.FlowCardCondition('sp1_onoff')
-			.register()
-			.registerRunListener(this.sp1_check_condition_on.bind(this) )
+		this.sp1_condition_on = this.homey.flow.getConditionCard('sp1_onoff')
+			.registerRunListener(this.sp1_check_condition_on.bind(this))
 
-		this.sp1_action_on = new Homey.FlowCardAction('sp1_onoff_on')
-			.register()
+		this.sp1_action_on = this.homey.flow.getActionCard('sp1_onoff_on')
 			.registerRunListener(this.sp1_do_action_on.bind(this))
 
-		this.sp1_action_off = new Homey.FlowCardAction('sp1_onoff_off')
-			.register()
+		this.sp1_action_off = this.homey.flow.getActionCard('sp1_onoff_off')
 			.registerRunListener(this.sp1_do_action_off.bind(this))
 
 	}

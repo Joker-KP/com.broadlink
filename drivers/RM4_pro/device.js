@@ -18,17 +18,15 @@
 
 'use strict';
 
-const BroadlinkDevice = require('./../../lib/BroadlinkDevice');
+const BroadlinkDevice = require('../../lib/BroadlinkDevice');
 const DataStore = require('./../../lib/DataStore.js')
 
 
-class RM3miniDevice extends BroadlinkDevice {
-
-
+class RM4ProDevice extends BroadlinkDevice {
 	/**
-	 * Store the given name at the first available place in settings.
-	 * i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
-	 */
+ * Store the given name at the first available place in settings.
+ * i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
+ */
 	async storeCmdSetting(cmdname) {
 
 		let settings = this.getSettings()
@@ -36,9 +34,9 @@ class RM3miniDevice extends BroadlinkDevice {
 		var idx = 0;
 		let settingName = 'RcCmd' + idx;
 		while (settingName in settings) {
-			//this._utils.debugLog( settingName );
+			this._utils.debugLog(settingName);
 			if (settings[settingName].length == 0) {
-				//this._utils.debugLog(this.getName()+' - storeCmdSettings - setting = '+settingName+', name = ' + cmdname );
+				this._utils.debugLog(this.getName() + ' - storeCmdSettings - setting = ' + settingName + ', name = ' + cmdname);
 				let s = {
 					[settingName]: cmdname
 				}
@@ -88,19 +86,19 @@ class RM3miniDevice extends BroadlinkDevice {
 		try {
 			let cmd = args['variable'];
 
-			//this._utils.debugLog('executeCommand '+cmd.name);
+			this._utils.debugLog('executeCommand ' + cmd.name);
 
 			// send the command
 			let cmdData = this.dataStore.getCommandData(cmd.name)
-			await this._communicate.send_IR_RF_data(cmdData)
+			await this._communicate.send_IR_RF_data_red(cmdData)
 			cmdData = null;
 
 			let drv = this.getDriver();
 			// RC_specific_sent: user entered command name
-			drv.rm3mini_specific_cmd_trigger.trigger(this, {}, { 'variable': cmd.name })
+			drv.rm4_pro_specific_cmd_trigger.trigger(this, {}, { 'variable': cmd.name })
 
 			// RC_sent_any: set token
-			drv.rm3mini_any_cmd_trigger.trigger(this, { 'CommandSent': cmd.name }, {})
+			drv.rm4_pro_any_cmd_trigger.trigger(this, { 'CommandSent': cmd.name }, {})
 
 		} catch (e) { ; }
 
@@ -133,24 +131,29 @@ class RM3miniDevice extends BroadlinkDevice {
 		return Promise.resolve(args.variable.name === state.variable)
 	}
 
-
-
-	/**
-	 *
-	 */
 	async onInit() {
 		super.onInit();
 		this.registerCapabilityListener('learnIRcmd', this.onCapabilityLearnIR.bind(this));
 
 		this.dataStore = new DataStore(this.getData().mac)
 		this.dataStore.readCommands(this.updateSettings.bind(this));
+
+		this.homey.drivers.getDriver("RM4_pro")
+			.ready(() => {
+				this._utils.debugLog('RM4ProDevice: onInit: driver ready');
+				// if the driver has a CheckInterval, set it. otherwise ignore it.
+				let ci = this.getSetting('CheckInterval');
+				if (ci) {
+					this._utils.debugLog('RM4ProDevice: onInit: start_check_interval');
+					this.start_check_interval(ci);
+				}
+			})
 	}
 
-
 	/**
-	 * This method will be called when the learn state needs to be changed.
-	 * @param onoff
-	 */
+ * This method will be called when the learn state needs to be changed.
+ * @param onoff
+ */
 	async onCapabilityLearnIR(onoff) {
 		if (this.learn) {
 			return true;
@@ -168,7 +171,7 @@ class RM3miniDevice extends BroadlinkDevice {
 				await this.storeCmdSetting(cmdname)
 			}
 		} catch (e) {
-			this._utils.debugLog('**> RM3miniDevice.onCapabilityLearnIR, rejected: ' + e);
+			this._utils.debugLog('**> RM4ProDevice.onCapabilityLearnIR, rejected: ' + e);
 		}
 		this.learn = false;
 	}
@@ -241,7 +244,6 @@ class RM3miniDevice extends BroadlinkDevice {
 		this.dataStore.deleteAllCommands();
 	}
 
-
 }
 
-module.exports = RM3miniDevice;
+module.exports = RM4ProDevice;

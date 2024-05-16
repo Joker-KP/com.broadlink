@@ -1,8 +1,8 @@
 {
-  "id": "RM3_mini",
+  "id": "RM4_mini",
   "name": {
-    "en": "RM3 Mini",
-    "nl": "RM3 Mini"
+    "en": "RM4 Mini",
+    "nl": "RM4 Mini"
   },
   "images": {
     "large": ".{{driverAssetsPath}}/images/large.jpg",
@@ -43,7 +43,7 @@
   "$flow": {
     "triggers": [
       {
-        "id": "RC_sent_any_rm3mini",
+        "id": "RC_sent_any_rm4_mini",
         "title": {
           "en": "Any Remote Command transmitted",
           "nl": "Commando verzonden"
@@ -64,7 +64,7 @@
         ]
       },
       {
-        "id": "RC_specific_sent_rm3mini",
+        "id": "RC_specific_sent_rm4_mini",
         "title": {
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
@@ -81,7 +81,7 @@
     "conditions": [],
     "actions": [
       {
-        "id": "send_command_rm3mini",
+        "id": "send_command_rm4_mini",
         "title": {
           "en": "Send Remote Command",
           "nl": "Verstuur commando"

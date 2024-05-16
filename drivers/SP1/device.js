@@ -18,57 +18,55 @@
 
 'use strict';
 
-const Homey = require('homey');
 const BroadlinkDevice = require('./../../lib/BroadlinkDevice');
-const Util = require('./../../lib/util.js');
 
 
-class SP1Device  extends BroadlinkDevice {
+class SP1Device extends BroadlinkDevice {
 
 
-	generate_trigger( mode ) {
-		if( mode != this.getCapabilityValue('onoff') ) {
+	generate_trigger(mode) {
+		if (mode != this.getCapabilityValue('onoff')) {
 			let drv = this.getDriver();
-			drv.trigger_toggle.trigger(this,{},{})
-			if( mode ) {
-				drv.trigger_on.trigger(this,{},{})
+			drv.trigger_toggle.trigger(this, {}, {})
+			if (mode) {
+				drv.trigger_on.trigger(this, {}, {})
 			}
 			else {
-				drv.trigger_off.trigger(this,{},{})
+				drv.trigger_off.trigger(this, {}, {})
 			}
 		}
 	}
-	
-	async set_onoff( mode ) {
+
+	async set_onoff(mode) {
 		this.generate_trigger(mode)
 		try {
 			await this._communicate.sp1_set_power_state(mode)
-		} catch( e ) { ; }
+		} catch (e) { ; }
 	}
 
 	check_condition_on() {
 		let onoff = this.getCapabilityValue('onoff')
-		return Promise.resolve( onoff )
+		return Promise.resolve(onoff)
 	}
 
 	do_action_on() {
-		this.set_onoff( true );
+		this.set_onoff(true);
 		this.setCapabilityValue('onoff', true);
 		return Promise.resolve(true)
 	}
 
 	do_action_off() {
-		this.set_onoff( false );
+		this.set_onoff(false);
 		this.setCapabilityValue('onoff', false);
 		return Promise.resolve(true)
 	}
 
-	onCapabilityOnOff( mode ) {
+	onCapabilityOnOff(mode) {
 		this.set_onoff(mode)
-		return Promise.resolve(); 
+		return Promise.resolve();
 	}
-	
-	onInit() {
+
+	async onInit() {
 		super.onInit();
 		this.registerCapabilityListener('onoff', this.onCapabilityOnOff.bind(this));
 	}

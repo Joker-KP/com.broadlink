@@ -18,26 +18,24 @@
 
 'use strict';
 
-const Homey = require('homey');
 const RM3MiniDevice = require('./../RM3_mini/device');
-const Util = require('./../../lib/util.js');
 
 
 class RmPlusDevice extends RM3MiniDevice {
 
 
-	onInit() {
+	async onInit() {
 		super.onInit();
 		this.learn = false;
 
 		this.registerCapabilityListener('learnRFcmd', this.onCapabilityLearnRF.bind(this));
 	}
 
-	
+
 	onCapabilityLearnMode() {
 		return false;
 	}
-	
+
 
 	/**
 	 * 
@@ -45,8 +43,8 @@ class RmPlusDevice extends RM3MiniDevice {
 	async stopRfLearning() {
 		try {
 			await this._communicate.cancelRFSweep();
-		} catch( e ) {
-			Util.debugLog('**> stopRfLearning: '+ e)
+		} catch (e) {
+			this._utils.debugLog('**> stopRfLearning: ' + e)
 		}
 		this.learn = false;
 	}
@@ -58,41 +56,41 @@ class RmPlusDevice extends RM3MiniDevice {
 	 * @return \c TRUE if successful, \c FALSE otherwise
 	 */
 	async onCapabilityLearnRF(onoff) {
-	    if( this.learn ) {
-	    	return true;
-	    }
-	    this.learn = true;
-	    
-	    let type = this.getData().devtype
+		if (this.learn) {
+			return true;
+		}
+		this.learn = true;
+
+		let type = this.getData().devtype
 		try {
 			var data;
 			await this._communicate.enterRFSweep()
 
-			await Homey.ManagerSpeechOutput.say(Homey.__('rf_learn.long_press'))
+			await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'))
 			await this._communicate.checkRFData()
 
-			await Homey.ManagerSpeechOutput.say(Homey.__('rf_learn.multi_presses'))
-			if(( type == 0x279D) || (type == 0x27A9)) {
+			await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'))
+			if ((type == 0x279D) || (type == 0x27A9)) {
 				await this._communicate.enter_learning()
 				data = await this._communicate.check_IR_data()
 			}
 			else {
 				data = await this._communicate.checkRFData2()
 			}
-			if( data ) {
+			if (data) {
 				let idx = this.dataStore.dataArray.length + 1;
 				let cmdname = 'rf-cmd' + idx;
-				this.dataStore.addCommand( cmdname, data);
-				await this.storeCmdSetting( cmdname );
+				this.dataStore.addCommand(cmdname, data);
+				await this.storeCmdSetting(cmdname);
 			}
 			await this.stopRfLearning();
-			await Homey.ManagerSpeechOutput.say(Homey.__('rf_learn.done'))
+			await this.homey.speechOutput.say(this.homey.__('rf_learn.done'))
 			return true;
 
-		} catch( e ) { }
-		
-		//Util.debugLog('**> Learing RF failed')
-		await Homey.ManagerSpeechOutput.say(Homey.__('rf_learn.done'))
+		} catch (e) { }
+
+		this._utils.debugLog('**> Learing RF failed')
+		await this.homey.speechOutput.say(this.homey.__('rf_learn.done'))
 		await this.stopRfLearning();
 		return false;
 	}
