@@ -66,10 +66,24 @@ class RmPlusDevice extends RM3MiniDevice {
 			var data;
 			await this._communicate.enterRFSweep()
 
-			await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'))
+			if (this.homey.speechOutput) {
+				await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'));
+			} else {
+				await this.homey.notifications.createNotification({
+					excerpt: this.homey.__('rf_learn.long_press')
+				});
+			}
+
 			await this._communicate.checkRFData()
 
-			await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'))
+			if (this.homey.speechOutput) {
+				await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'));
+			} else {
+				await this.homey.notifications.createNotification({
+					excerpt: this.homey.__('rf_learn.multi_presses')
+				});
+			}
+
 			if ((type == 0x279D) || (type == 0x27A9)) {
 				await this._communicate.enter_learning()
 				data = await this._communicate.check_IR_data()
@@ -84,13 +98,29 @@ class RmPlusDevice extends RM3MiniDevice {
 				await this.storeCmdSetting(cmdname);
 			}
 			await this.stopRfLearning();
-			await this.homey.speechOutput.say(this.homey.__('rf_learn.done'))
+
+			if (this.homey.speechOutput) {
+				await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+			} else {
+				await this.homey.notifications.createNotification({
+					excerpt: this.homey.__('rf_learn.done')
+				});
+			}
+
 			return true;
 
 		} catch (e) { }
 
 		this._utils.debugLog('**> Learing RF failed')
-		await this.homey.speechOutput.say(this.homey.__('rf_learn.done'))
+
+		if (this.homey.speechOutput) {
+			await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+		} else {
+			await this.homey.notifications.createNotification({
+				excerpt: this.homey.__('rf_learn.done')
+			});
+		}
+
 		await this.stopRfLearning();
 		return false;
 	}

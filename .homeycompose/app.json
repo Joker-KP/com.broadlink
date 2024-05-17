@@ -13,37 +13,44 @@
     "nl": "Voegt ondersteuning voor Broadlink apparaten toe."
   },
   "category": ["appliances", "lights", "climate"],
-  "permissions": ["homey:manager:speech-output"],
+  "permissions": [
+    "homey:manager:speech-output",
+    "homey:manager:notifications"
+  ],
   "images": {
     "large": "/assets/images/large.jpg",
     "small": "/assets/images/small.jpg"
   },
   "author": {
-    "name": "Remko Wensveen",
-    "email": "r966430@gmail.com"
+    "name": "Bretislav Kubesa",
+    "website": "https://github.com/shaarkys"
   },
   "contributors": {
     "developers": [
       {
+        "name": "Remko Wensveen",
+        "email": "r966430@gmail.com"
+      },
+      {
         "name": "Finn Kristian Meland",
         "email": "fkmeland@gmail.com"
+      },
+      {
+        "name": "Pieter Verougstraete"
       }
     ]
   },
   "contributing": {
     "donate": {
       "paypal": {
-        "username": "fkmeland"
-      },
-      "githubSponsors": {
-        "username": "fkmeland"
+        "username": "bkubesa"
       }
     }
   },
   "bugs": {
-    "url": "https://github.com/fkmeland/com.broadlink/issues"
+    "url": "https://github.com/shaarkys/com.broadlink/issues"
   },
-  "source": "https://github.com/fkmeland/com.broadlink",
+  "source": "https://github.com/shaarkys/com.broadlink",
   "tags": {
     "en": [
       "Home",
