@@ -71,6 +71,10 @@
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
         },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
+        },
         "args": [
           {
             "name": "variable",
@@ -87,6 +91,10 @@
         "title": {
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
+        },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
         },
         "args": [
           {

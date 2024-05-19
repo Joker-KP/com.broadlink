@@ -14,8 +14,7 @@
   },
   "category": ["appliances", "lights", "climate"],
   "permissions": [
-    "homey:manager:speech-output",
-    "homey:manager:notifications"
+    "homey:manager:speech-output"
   ],
   "images": {
     "large": "/assets/images/large.jpg",

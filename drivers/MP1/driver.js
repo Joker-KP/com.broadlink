@@ -37,36 +37,38 @@ class BroadlinkMP1Driver extends BroadlinkDriver {
 
 
 	async onInit() {
-		super.onInit({
-			CompatibilityID: 0x4EB5  // MP1
+		await super.onInit({
+			CompatibilityID: 0x4EB5 // MP1
 		});
 
 		this.trigger_toggle = this.homey.flow.getDeviceTriggerCard('mp1_onoff_change')
-			.registerRunListener((args, state, callback) => {
-				callback(null, (args.switchID == state.switchID))
-			})
+			.registerRunListener(async (args, state) => {
+				return args.switchID === state.switchID;
+			});
+
 		this.trigger_on = this.homey.flow.getDeviceTriggerCard('mp1_onoff_on')
-			.registerRunListener((args, state, callback) => {
-				callback(null, (args.switchID == state.switchID))
-			})
+			.registerRunListener(async (args, state) => {
+				return args.switchID === state.switchID;
+			});
+
 		this.trigger_off = this.homey.flow.getDeviceTriggerCard('mp1_onoff_off')
-			.registerRunListener((args, state, callback) => {
-				callback(null, (args.switchID == state.switchID))
-			})
+			.registerRunListener(async (args, state) => {
+				return args.switchID === state.switchID;
+			});
 
 		this.mp1_condition_on = this.homey.flow.getConditionCard('mp1_onoff');
 		this.mp1_condition_on
-			.registerRunListener(this.mp1_check_condition_on.bind(this))
+			.registerRunListener(this.mp1_check_condition_on.bind(this));
 
 		this.mp1_action_on = this.homey.flow.getActionCard('mp1_onoff_on');
 		this.mp1_action_on
-			.registerRunListener(this.mp1_do_action_on.bind(this))
+			.registerRunListener(this.mp1_do_action_on.bind(this));
 
 		this.mp1_action_off = this.homey.flow.getActionCard('mp1_onoff_off');
 		this.mp1_action_off
-			.registerRunListener(this.mp1_do_action_off.bind(this))
-
+			.registerRunListener(this.mp1_do_action_off.bind(this));
 	}
+
 
 }
 

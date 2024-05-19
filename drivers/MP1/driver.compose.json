@@ -186,6 +186,10 @@
       {
         "id": "mp1_onoff_on",
         "title": { "en": "Switch on", "nl": "Schakelaar aan" },
+        "titleFormatted": {
+          "en": "Turn on MP1 socket [[switchID]]",
+          "nl": "Zet MP1 socket [[switchID]] aan"
+        },
         "args": [
           {
             "type": "dropdown",

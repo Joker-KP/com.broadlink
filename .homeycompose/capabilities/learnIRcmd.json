@@ -4,7 +4,8 @@
 		"en": "Learn IR command",
 		"nl": "Leer IR commando"
 	},
-	"getable": false,
+	"getable": true,
 	"setable": true,
-	"insights" : false
+	"insights" : false,
+	"uiComponent": "button"
 }

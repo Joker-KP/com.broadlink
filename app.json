@@ -26,31 +26,35 @@
     "small": "/assets/images/small.jpg"
   },
   "author": {
-    "name": "Remko Wensveen",
-    "email": "r966430@gmail.com"
+    "name": "Bretislav Kubesa",
+    "website": "https://github.com/shaarkys"
   },
   "contributors": {
     "developers": [
       {
+        "name": "Remko Wensveen",
+        "email": "r966430@gmail.com"
+      },
+      {
         "name": "Finn Kristian Meland",
         "email": "fkmeland@gmail.com"
+      },
+      {
+        "name": "Pieter Verougstraete"
       }
     ]
   },
   "contributing": {
     "donate": {
       "paypal": {
-        "username": "fkmeland"
-      },
-      "githubSponsors": {
-        "username": "fkmeland"
+        "username": "bkubesa"
       }
     }
   },
   "bugs": {
-    "url": "https://github.com/fkmeland/com.broadlink/issues"
+    "url": "https://github.com/shaarkys/com.broadlink/issues"
   },
-  "source": "https://github.com/fkmeland/com.broadlink",
+  "source": "https://github.com/shaarkys/com.broadlink",
   "tags": {
     "en": [
       "Home",
@@ -94,6 +98,10 @@
         "title": {
           "en": "The Air Quality has changed",
           "nl": "De luchtkwaliteit is veranderd"
+        },
+        "titleFormatted": {
+          "en": "Air quality is [[airquality]]",
+          "nl": "Luchtkwaliteit is [[airquality]]"
         },
         "tokens": [
           {
@@ -435,6 +443,10 @@
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
         },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
+        },
         "args": [
           {
             "type": "device",
@@ -484,6 +496,10 @@
         "title": {
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
+        },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
         },
         "args": [
           {
@@ -535,6 +551,10 @@
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
         },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
+        },
         "args": [
           {
             "type": "device",
@@ -585,6 +605,10 @@
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
         },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
+        },
         "args": [
           {
             "type": "device",
@@ -634,6 +658,10 @@
         "title": {
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
+        },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
         },
         "args": [
           {
@@ -869,6 +897,10 @@
           "en": "Air Quality",
           "nl": "Luchtkwaliteit"
         },
+        "titleFormatted": {
+          "en": "Air quality is [[variable]]",
+          "nl": "Luchtkwaliteit is [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -890,6 +922,10 @@
         "title": {
           "en": "Air Quality is !{{better|not better}} than",
           "nl": "Luchtkwaliteit is !{{beter|niet beter}} dan"
+        },
+        "titleFormatted": {
+          "en": "Air quality is better than [[variable]]",
+          "nl": "Luchtkwaliteit is beter dan [[variable]]"
         },
         "args": [
           {
@@ -913,6 +949,10 @@
           "en": "Air Quality is !!{{worse|not worse}} than",
           "nl": "Luchtkwaliteit is !{{slechter|niet slechter}} dan"
         },
+        "titleFormatted": {
+          "en": "Air quality is worse than [[variable]]",
+          "nl": "Luchtkwaliteit is slechter dan [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -934,6 +974,10 @@
         "title": {
           "en": "Light Level",
           "nl": "Lichtniveau"
+        },
+        "titleFormatted": {
+          "en": "Light level is [[variable]]",
+          "nl": "Lichtniveau is [[variable]]"
         },
         "args": [
           {
@@ -957,6 +1001,10 @@
           "en": "Light Level is !{{brighter|not brighter}} than",
           "nl": "Lichtniveau is !{{helderder|niet helderder}} dan"
         },
+        "titleFormatted": {
+          "en": "Light level is brighter than [[variable]]",
+          "nl": "Lichtniveau is helderder dan [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -978,6 +1026,10 @@
         "title": {
           "en": "Light Level is !{{darker|not darker}} than",
           "nl": "Lichtniveau is !{{donkerder|niet donkerder}} dan"
+        },
+        "titleFormatted": {
+          "en": "Light level is darker than [[variable]]",
+          "nl": "Lichtniveau is donkerder dan [[variable]]"
         },
         "args": [
           {
@@ -1001,6 +1053,10 @@
           "en": "Noise Level",
           "nl": "Geluidsniveau"
         },
+        "titleFormatted": {
+          "en": "Noise level is [[variable]]",
+          "nl": "Geluidsniveau is [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -1023,6 +1079,10 @@
           "en": "Noise Level is !{{louder|not louder}} than",
           "nl": "Geluidsniveau is !{{harder|niet harder}} dan"
         },
+        "titleFormatted": {
+          "en": "Noise level is louder than [[variable]]",
+          "nl": "Geluidsniveau is luider dan [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -1044,6 +1104,10 @@
         "title": {
           "en": "Noise Level is !{{softer|not softer} than",
           "nl": "Geluidsniveau is !{{zachter|niet zachter}} dan"
+        },
+        "titleFormatted": {
+          "en": "Noise level is softer than [[variable]]",
+          "nl": "Geluidsniveau is zachter dan [[variable]]"
         },
         "args": [
           {
@@ -1293,6 +1357,10 @@
           "en": "Switch on",
           "nl": "Schakelaar aan"
         },
+        "titleFormatted": {
+          "en": "Turn on MP1 socket [[switchID]]",
+          "nl": "Zet MP1 socket [[switchID]] aan"
+        },
         "args": [
           {
             "type": "device",
@@ -1393,6 +1461,10 @@
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
         },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -1414,6 +1486,10 @@
         "title": {
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
+        },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
         },
         "args": [
           {
@@ -1437,6 +1513,10 @@
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
         },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -1459,6 +1539,10 @@
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
         },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
+        },
         "args": [
           {
             "type": "device",
@@ -1480,6 +1564,10 @@
         "title": {
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
+        },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
         },
         "args": [
           {
@@ -5512,9 +5600,10 @@
         "en": "Learn IR command",
         "nl": "Leer IR commando"
       },
-      "getable": false,
+      "getable": true,
       "setable": true,
-      "insights": false
+      "insights": false,
+      "uiComponent": "button"
     },
     "learnRFcmd": {
       "type": "boolean",

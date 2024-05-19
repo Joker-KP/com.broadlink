@@ -7,7 +7,7 @@ app.json__NEW
 app.json__ORIG
 
 #node modules
-node_modules/.bin
+node_modules/*
 
 # client id & secret
 env.json

@@ -9,7 +9,7 @@
 		"small": "{{driverAssetsPath}}/images/small.jpg"
 	},
 	"class": "sensor",
-	"capabilities" : [
+	"capabilities": [
 		"updateSensor",
 		"measure_temperature",
 		"measure_humidity",
@@ -67,22 +67,32 @@
 	"$flow": {
 		"triggers": [
 			{
-				"id":"a1_air_quality",
+				"id": "a1_air_quality",
 				"title": {
 					"en": "The Air Quality has changed",
 					"nl": "De luchtkwaliteit is veranderd"
 				},
-		        "tokens": [
+				"titleFormatted": {
+					"en": "Air quality is [[airquality]]",
+					"nl": "Luchtkwaliteit is [[airquality]]"
+				},
+				"tokens": [
 					{
 						"name": "airquality",
 						"type": "string",
-						"title": { "en": "Air Quality", "nl": "Luchtkwaliteit" },
-						"example": { "en": "good", "nl": "goed" }
+						"title": {
+							"en": "Air Quality",
+							"nl": "Luchtkwaliteit"
+						},
+						"example": {
+							"en": "good",
+							"nl": "goed"
+						}
 					}
 				]
 			},
 			{
-				"id":"a1_light_level",
+				"id": "a1_light_level",
 				"title": {
 					"en": "The Light Level has changed",
 					"nl": "Het lichtniveau is veranderd"
@@ -91,13 +101,19 @@
 					{
 						"name": "lightlevel",
 						"type": "string",
-						"title": { "en": "Light Level", "nl": "Lichtniveau" },
-						"example": { "en": "bright", "nl": "helder" }
+						"title": {
+							"en": "Light Level",
+							"nl": "Lichtniveau"
+						},
+						"example": {
+							"en": "bright",
+							"nl": "helder"
+						}
 					}
 				]
 			},
 			{
-				"id":"a1_noise_level",
+				"id": "a1_noise_level",
 				"title": {
 					"en": "The Noise Level has changed",
 					"nl": "Het geluidsniveau is veranderd"
@@ -106,62 +122,92 @@
 					{
 						"name": "noiselevel",
 						"type": "string",
-						"title": { "en": "Noise Level", "nl": "Geluidsniveau" },
-						"example": { "en": "quiet", "nl": "stil" }
+						"title": {
+							"en": "Noise Level",
+							"nl": "Geluidsniveau"
+						},
+						"example": {
+							"en": "quiet",
+							"nl": "stil"
+						}
 					}
 				]
 			}
 		],
 		"conditions": [
 			{
-				"id":"a1_air_quality",
+				"id": "a1_air_quality",
 				"title": {
 					"en": "Air Quality",
 					"nl": "Luchtkwaliteit"
 				},
+				"titleFormatted": {
+					"en": "Air quality is [[variable]]",
+					"nl": "Luchtkwaliteit is [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
 						"type": "autocomplete",
-						"placeholder": { "en": "Level", "nl": "Niveau" }
+						"placeholder": {
+							"en": "Level",
+							"nl": "Niveau"
+						}
 					}
 				]
 			},
 			{
-				"id":"a1_air_quality_better",
+				"id": "a1_air_quality_better",
 				"title": {
 					"en": "Air Quality is !{{better|not better}} than",
 					"nl": "Luchtkwaliteit is !{{beter|niet beter}} dan"
 				},
+				"titleFormatted": {
+					"en": "Air quality is better than [[variable]]",
+					"nl": "Luchtkwaliteit is beter dan [[variable]]"
+				},
 				"args": [
 					{
 						"name": "variable",
 						"type": "autocomplete",
-						"placeholder": { "en": "Level", "nl": "Niveau" }
+						"placeholder": {
+							"en": "Level",
+							"nl": "Niveau"
+						}
 					}
 				]
 			},
 			{
-				"id":"a1_air_quality_worse",
+				"id": "a1_air_quality_worse",
 				"title": {
 					"en": "Air Quality is !!{{worse|not worse}} than",
 					"nl": "Luchtkwaliteit is !{{slechter|niet slechter}} dan"
 				},
+				"titleFormatted": {
+					"en": "Air quality is worse than [[variable]]",
+					"nl": "Luchtkwaliteit is slechter dan [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
 						"type": "autocomplete",
-						"placeholder": { "en": "Level", "nl": "Niveau"
+						"placeholder": {
+							"en": "Level",
+							"nl": "Niveau"
 						}
 					}
 				]
 			},
 			{
-				"id":"a1_light_level",
+				"id": "a1_light_level",
 				"title": {
 					"en": "Light Level",
 					"nl": "Lichtniveau"
 				},
+				"titleFormatted": {
+					"en": "Light level is [[variable]]",
+					"nl": "Lichtniveau is [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -174,11 +220,15 @@
 				]
 			},
 			{
-				"id":"a1_light_level_brighter",
+				"id": "a1_light_level_brighter",
 				"title": {
 					"en": "Light Level is !{{brighter|not brighter}} than",
 					"nl": "Lichtniveau is !{{helderder|niet helderder}} dan"
 				},
+				"titleFormatted": {
+					"en": "Light level is brighter than [[variable]]",
+					"nl": "Lichtniveau is helderder dan [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -191,11 +241,15 @@
 				]
 			},
 			{
-				"id":"a1_light_level_darker",
+				"id": "a1_light_level_darker",
 				"title": {
 					"en": "Light Level is !{{darker|not darker}} than",
 					"nl": "Lichtniveau is !{{donkerder|niet donkerder}} dan"
 				},
+				"titleFormatted": {
+					"en": "Light level is darker than [[variable]]",
+					"nl": "Lichtniveau is donkerder dan [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -208,11 +262,15 @@
 				]
 			},
 			{
-				"id":"a1_noise_level",
+				"id": "a1_noise_level",
 				"title": {
 					"en": "Noise Level",
 					"nl": "Geluidsniveau"
 				},
+				"titleFormatted": {
+					"en": "Noise level is [[variable]]",
+					"nl": "Geluidsniveau is [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -225,11 +283,15 @@
 				]
 			},
 			{
-				"id":"a1_noise_level_louder",
+				"id": "a1_noise_level_louder",
 				"title": {
 					"en": "Noise Level is !{{louder|not louder}} than",
 					"nl": "Geluidsniveau is !{{harder|niet harder}} dan"
 				},
+				"titleFormatted": {
+					"en": "Noise level is louder than [[variable]]",
+					"nl": "Geluidsniveau is luider dan [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -242,11 +304,15 @@
 				]
 			},
 			{
-				"id":"a1_noise_level_softer",
+				"id": "a1_noise_level_softer",
 				"title": {
 					"en": "Noise Level is !{{softer|not softer} than",
 					"nl": "Geluidsniveau is !{{zachter|niet zachter}} dan"
 				},
+				"titleFormatted": {
+					"en": "Noise level is softer than [[variable]]",
+					"nl": "Geluidsniveau is zachter dan [[variable]]"
+				  },
 				"args": [
 					{
 						"name": "variable",
@@ -259,8 +325,6 @@
 				]
 			}
 		],
-		"actions": [
-		]
+		"actions": []
 	}
-	
 }

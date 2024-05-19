@@ -141,6 +141,7 @@ class RM4miniDevice extends BroadlinkDevice {
 	onInit() {
 		super.onInit();
 		this.registerCapabilityListener('learnIRcmd', this.onCapabilityLearnIR.bind(this));
+		this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after error
 
 		this.dataStore = new DataStore(this.getData().mac)
 		this.dataStore.readCommands(this.updateSettings.bind(this));
@@ -153,24 +154,33 @@ class RM4miniDevice extends BroadlinkDevice {
 	 */
 	async onCapabilityLearnIR(onoff) {
 		if (this.learn) {
-			return true;
+			return false;
 		}
 		this.learn = true;
 
 		try {
-			await this._communicate.enter_learning_red()
-			let data = await this._communicate.check_IR_data_red()
+			await this._communicate.enter_learning();
+			let data = await this._communicate.check_IR_data();
 			if (data) {
 				let idx = this.dataStore.dataArray.length + 1;
 				let cmdname = 'cmd' + idx;
 				this.dataStore.addCommand(cmdname, data);
 
-				await this.storeCmdSetting(cmdname)
+				await this.storeCmdSetting(cmdname);
+				this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after success
+				this.learn = false;
+				return true;
+			} else {
+				this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after failure
+				this.learn = false;
+				return false;
 			}
 		} catch (e) {
+			this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after error
 			this._utils.debugLog('**> RM4miniDevice.onCapabilityLearnIR, rejected: ' + e);
+			this.learn = false;
+			return false;
 		}
-		this.learn = false;
 	}
 
 
@@ -178,60 +188,58 @@ class RM4miniDevice extends BroadlinkDevice {
 	 * Called when the device settings are changed by the user
 	 * (so NOT called on programmatically changing settings)
 	 *
+	 *  @param oldSettingsObj   contains the previous settings object
+	 *  @param newSettingsObj   contains the new settings object
 	 *  @param changedKeysArr   contains an array of keys that have been changed
+	 *  @return {Promise<void>}
 	 */
-	onSettings(oldSettingsObj, newSettingsObj, changedKeysArr, callback) {
-
-		super.onSettings(oldSettingsObj, newSettingsObj, changedKeysArr, null);
+	async onSettings({ oldSettings, newSettings, changedKeys }) {
+		this._utils.debugLog('Settings changed:', changedKeys);
+		this._utils.debugLog('Old settings:', oldSettings);
+		this._utils.debugLog('New settings:', newSettings);
 
 		let i = 0;
 		let oldName = '';
 		let newName = '';
 
 		// Verify all settings
-		for (i = 0; i < changedKeysArr.length; i++) {
-			oldName = oldSettingsObj[changedKeysArr[i]] || '';
-			newName = newSettingsObj[changedKeysArr[i]] || '';
+		for (i = 0; i < changedKeys.length; i++) {
+			oldName = oldSettings[changedKeys[i]] || '';
+			newName = newSettings[changedKeys[i]] || '';
 
-			// has old + has new: rename
-			// has old + no new: delete
-			// no old + has new: error
-			// no old + no new: unused
-			if (newName.length > 0) {
-				if (oldName.length > 0) {
+			this._utils.debugLog(`Changed setting key: ${changedKeys[i]}, Old value: ${oldName}, New value: ${newName}`);
+
+			// Ensure oldName and newName are defined before checking length
+			if (newName && newName.length > 0) {
+				if (oldName && oldName.length > 0) {
 					if (this.dataStore.findCommand(newName) >= 0) {
-						callback(this.homey.__('errors.save_settings_exist', { 'cmd': newName }), false);
-						return;
+						this._utils.debugLog(`Error: Command ${newName} already exists`);
+						throw new Error(this.homey.__('errors.save_settings_exist', { 'cmd': newName }));
 					}
-				}
-				else {
-					callback(this.homey.__('errors.save_settings_nocmd', { 'cmd': newName }), null);
-					return;
+				} else {
+					this._utils.debugLog(`Error: No old command found for new command ${newName}`);
+					throw new Error(this.homey.__('errors.save_settings_nocmd', { 'cmd': newName }));
 				}
 			}
 		}
 
 		// All settings OK, process them
-		for (i = 0; i < changedKeysArr.length; i++) {
-			oldName = oldSettingsObj[changedKeysArr[i]] || ''
-			newName = newSettingsObj[changedKeysArr[i]] || ''
+		for (i = 0; i < changedKeys.length; i++) {
+			oldName = oldSettings[changedKeys[i]] || '';
+			newName = newSettings[changedKeys[i]] || '';
 
-			if (newName.length > 0) {
+			this._utils.debugLog(`Processing setting key: ${changedKeys[i]}, Old value: ${oldName}, New value: ${newName}`);
+
+			if (newName && newName.length > 0) {
 				this.dataStore.renameCommand(oldName, newName);
-			}
-			else {
+			} else {
 				this.dataStore.deleteCommand(oldName);
 			}
 		}
 
-		callback(null, true);
-
-		// always fire the callback, or the settings won't change!
-		// if the settings must not be saved for whatever reason:
-		//    callback( "Your error message", null );
-		// else
-		//    callback("Your success message", true )
+		this._utils.debugLog('Settings successfully updated.');
 	}
+
 
 
 	/**

@@ -9,7 +9,9 @@
     "small": ".{{driverAssetsPath}}/images/small.jpg"
   },
   "class": "other",
-  "capabilities": ["learnIRcmd"],
+  "capabilities": [
+    "learnIRcmd"
+  ],
   "mobile": {
     "components": [
       {
@@ -18,7 +20,9 @@
       },
       {
         "id": "button",
-        "capabilities": ["learnIRcmd"]
+        "capabilities": [
+          "learnIRcmd"
+        ]
       }
     ]
   },
@@ -39,7 +43,9 @@
       "template": "add_devices"
     }
   ],
-  "$extends": ["rm.settings"],
+  "$extends": [
+    "rm.settings"
+  ],
   "$flow": {
     "triggers": [
       {
@@ -69,11 +75,18 @@
           "en": "Remote Command transmitted",
           "nl": "Commando verzonden"
         },
+        "titleFormatted": {
+          "en": "Specific command [[variable]] sent",
+          "nl": "Specifiek commando [[variable]] verzonden"
+        },
         "args": [
           {
             "name": "variable",
             "type": "autocomplete",
-            "placeholder": { "en": "name", "nl": "naam" }
+            "placeholder": {
+              "en": "name",
+              "nl": "naam"
+            }
           }
         ]
       }
@@ -85,6 +98,10 @@
         "title": {
           "en": "Send Remote Command",
           "nl": "Verstuur commando"
+        },
+        "titleFormatted": {
+          "en": "Send command [[variable]]",
+          "nl": "Verstuur commando [[variable]]"
         },
         "args": [
           {
