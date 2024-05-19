@@ -28,10 +28,8 @@ Others might follow...
 
 In the application settings, there are 2 flags to enable logging: Debug and Sentry.
 - Debug logging dumps messages via the console log. This only works if the app is 
-  started in debug mode from a PC (using 'athom app run')
-- Sentry.IO is an error tracking system, which will create an error report for every
-  message send to it. Use this only if you want to report an issue, and can reproduce
-  it.
+  started in debug mode from a PC (using 'athom app run --remote')
+- Sentry is currently disabled
 
 # Reference
 
@@ -62,32 +60,6 @@ In order to create a full app.json, open a commandline (i.e. terminal):
 	> athom app validate
  
 
-# To Do
-
-still some things to do:
-- add supported devices (see com.broadlink/lib/DeviceInfo for list)
-
-
 # Version
 
-* 2.0.4<br>
-Full working version of Hysen thermostat. Tested with a BEOK 'tol313' thermostat.
-Add Dooya motorized curtains.
-Correct display of icons for A1
-* 2.0.3<br>
-Add user manual (in APPSTORE.md) explaining how to use RF learning.<br>
-Correct sensor display of A1 device<br>
-Correct SP1 device, so the app will not crash :-)<br>
-Add Hysen thermostat (implementation done, testing not done -> it might completely fail)<br>
-Move capability icons to /assets directory (i.s.o. /drivers/xxx/assets)<br>
-Correct app settings page to show current settings.
-<br><br>
-* 2.0.2<br>
-Learning and transmitting RF (433MHz) works. Homey speech is used to inform the user on what to do.
-<br><br>
-* 2.0.1<br>
-Updated to Homey V2.0 to prevent app crashes
-Use async/await wherever possible (easier to read compared to Promise)
-<br><br>
-* 1.3.5<br>
-All seems ok, but RF not working
+See https://homey.app/en-us/app/com.broadlink/Broadlink/ for Changelog
