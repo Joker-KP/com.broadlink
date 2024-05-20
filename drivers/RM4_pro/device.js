@@ -156,31 +156,43 @@ class RM4ProDevice extends BroadlinkDevice {
 	 * @param onoff
 	 */
 	async onCapabilityLearnIR(onoff) {
+		if (!onoff) {
+			this.learn = false;
+			return true;
+		}
+
 		if (this.learn) {
 			return false;
 		}
+
 		this.learn = true;
+		this._utils.debugLog('Starting IR learning mode');
 
 		try {
 			await this._communicate.enter_learning();
+			this._utils.debugLog('Entered learning mode');
 			let data = await this._communicate.check_IR_data();
+			this._utils.debugLog('Checked IR data, data: ' + data);
+
 			if (data) {
 				let idx = this.dataStore.dataArray.length + 1;
 				let cmdname = 'cmd' + idx;
 				this.dataStore.addCommand(cmdname, data);
 
 				await this.storeCmdSetting(cmdname);
-				this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after success
+				this._utils.debugLog('Stored command: ' + cmdname);
+				await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after success
 				this.learn = false;
 				return true;
 			} else {
-				this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after failure
+				this._utils.debugLog('No IR data received');
+				await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after failure
 				this.learn = false;
 				return false;
 			}
 		} catch (e) {
-			this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after error
-			this._utils.debugLog('**> RM4ProDevice.onCapabilityLearnIR, rejected: ' + e);
+			this._utils.debugLog('Error during IR learning: ' + e);
+			await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after error
 			this.learn = false;
 			return false;
 		}

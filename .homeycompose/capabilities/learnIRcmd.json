@@ -6,6 +6,14 @@
 	},
 	"getable": true,
 	"setable": true,
-	"insights" : false,
-	"uiComponent": "button"
+	"insights" : true,
+	"uiComponent": "button",
+	"insightsTitleTrue": {
+        "en": "Learning mode activated",
+        "nl": "Leer modus geactiveerd"
+    },
+    "insightsTitleFalse": {
+        "en": "Learning mode deactivated",
+        "nl": "Leer modus gedeactiveerd"
+    }
 }
