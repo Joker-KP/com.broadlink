@@ -3170,22 +3170,9 @@
       },
       "class": "other",
       "capabilities": [
-        "learnIRcmd"
+        "learnIRcmd",
+        "learningState"
       ],
-      "mobile": {
-        "components": [
-          {
-            "id": "icon",
-            "capabilities": []
-          },
-          {
-            "id": "button",
-            "capabilities": [
-              "learnIRcmd"
-            ]
-          }
-        ]
-      },
       "pair": [
         {
           "id": "start"
@@ -3627,22 +3614,9 @@
       },
       "class": "other",
       "capabilities": [
-        "learnIRcmd"
+        "learnIRcmd",
+        "learningState"
       ],
-      "mobile": {
-        "components": [
-          {
-            "id": "icon",
-            "capabilities": []
-          },
-          {
-            "id": "button",
-            "capabilities": [
-              "learnIRcmd"
-            ]
-          }
-        ]
-      },
       "pair": [
         {
           "id": "start"
@@ -5594,6 +5568,26 @@
       "uiComponent": null,
       "insights": true
     },
+    "learningState": {
+      "type": "boolean",
+      "title": {
+        "en": "Learning State",
+        "nl": "Leerstatus"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "insightsTitleTrue": {
+        "en": "Learning mode is active",
+        "nl": "Leer modus is actief"
+      },
+      "insightsTitleFalse": {
+        "en": "Learning mode is inactive",
+        "nl": "Leer modus is inactief"
+      },
+      "icon": "/assets/learningState.svg"
+    },
     "learnIRcmd": {
       "type": "boolean",
       "title": {
@@ -5619,9 +5613,10 @@
         "en": "Learn RF command",
         "nl": "Leer RF commando"
       },
-      "getable": false,
+      "getable": true,
       "setable": true,
       "insights": true,
+      "uiComponent": "button",
       "insightsTitleTrue": {
         "en": "Learning mode activated",
         "nl": "Leer modus geactiveerd"

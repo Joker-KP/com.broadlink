@@ -37,7 +37,7 @@ class BroadlinkMP1Driver extends BroadlinkDriver {
 
 
 	async onInit() {
-		await super.onInit({
+		super.onInit({
 			CompatibilityID: 0x4EB5 // MP1
 		});
 

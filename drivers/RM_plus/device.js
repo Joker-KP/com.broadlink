@@ -44,7 +44,7 @@ class RmPlusDevice extends RM3MiniDevice {
 		try {
 			await this._communicate.cancelRFSweep();
 		} catch (e) {
-			this._utils.debugLog('**> stopRfLearning: ' + e)
+			this._utils.debugLog(this, '**> stopRfLearning: ' + e)
 		}
 		this.learn = false;
 	}
@@ -111,7 +111,7 @@ class RmPlusDevice extends RM3MiniDevice {
 
 		} catch (e) { }
 
-		this._utils.debugLog('**> Learing RF failed')
+		this._utils.debugLog(this, '**> Learing RF failed')
 
 		if (this.homey.speechOutput) {
 			await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));

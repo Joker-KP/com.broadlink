@@ -231,7 +231,7 @@ class A1Device extends BroadlinkDevice {
 			if (curr_noise != this.noise_level) { drv.a1_trigger_noise_level.trigger(this, { 'noiselevel': str_noise }, {}) }
 
 		} catch (e) {
-			this._utils.debugLog('**> A1.onCheckInterval: ' + e);
+			this._utils.debugLog(this, '**> A1.onCheckInterval: ' + e);
 		}
 
 	}

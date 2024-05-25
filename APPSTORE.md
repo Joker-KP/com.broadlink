@@ -2,26 +2,6 @@
 
 Use [Homey](https://www.athom.com/) together with [Broadlink devices](http://www.ibroadlink.com/).
 
-
-# Supported devices
-
-* [A1](http://www.ibroadlink.com/a1/) - Environment Sensor
-* [RM3 mini](http://www.ibroadlink.com/rmMini3/)
-  The RM3 Mini is a wifi to IR (infrared) device. It can learn IR commands and transmit them.
-* [RM Pro](http://www.ibroadlink.com/rmPro)  - IR
-* [RM Pro Plus](http://www.ibroadlink.com/rmPro+)   - IR + RF
-
-* SP1  - power socket switch
-* SP2  - power socket switch with nightlight and meter
-* SP3S - power socket switch with meter
-* MP1 - 4 way power socket switch
-* Thermostats - Thermostats by Hysen/[Beok](http://www.beok-controls.com/product.asp) and other brands
-
-See compatibility list further on.
-
-# Soon to be supported devices
-
-
 # Device configuration
 
 The devices need to be configured before they can be paired with Homey.
@@ -47,7 +27,6 @@ give the command a more logical name, or delete it by clearing its name.
 Currently 20 to 30 commands are supported in the settings page of each device.
 It is not possible at this moment to change the order of the commands in the settings page.
 
-
 # Learning RF commands with RM Pro Plus
 
 Once the RM-Pro-plus device is installed in Homey, it can learn RF commands.
@@ -62,7 +41,7 @@ available also.
 
 Learning is done as follows:
   
-1.  make sure the volume of the speaker in Homey is set to a clearly audible level.
+1. make sure the volume of the speaker in Homey is set to a clearly audible level.
     => open the app
     -> more
     -> Settings
@@ -81,19 +60,19 @@ Learning is done as follows:
 6. Homey will then tell you to press the button repeatedly.
    So, press the button, release it, press it, release it (but not too fast).
 
-   As it is important that the RM-Pro-plus understands the button presses, 
+   As it is important that the RM-Pro-plus understands the button presses,
    it is best you verify you are pressing the button at the correct speed.
    You can do this as follows:
-    - switch on the device you want to control with your RF-remote
-    - press the button on the RF-remote, and observe your device responding to it.
-    - release the button.
-    - keep on repeating the press/release steps.
-    - your device should respond to each button press.
-    
+    * switch on the device you want to control with your RF-remote
+    * press the button on the RF-remote, and observe your device responding to it.
+    * release the button.
+    * keep on repeating the press/release steps.
+    * your device should respond to each button press.
+
 7. Homey will tell you to stop pressing the button.
    The RM-Pro-plus now has learned the command.
-   
-You can now repeat the learning process for another button, or you can give 
+
+You can now repeat the learning process for another button, or you can give
 the command just learned a meaningfull name
 
 8. Give the command a meaningfull name
@@ -103,20 +82,18 @@ the command just learned a meaningfull name
    a.  Rename the command (tap on the name, edit it, save it)
    b.  Remove the command (tap on the name, clear the name, save it)
 
-
-** Using learned commands**
+**Using learned commands**
 
 Both InfraRed and RF commands can now be used in an identical way.
 All commands the RM-Pro-plus has learned, are available only in flows.
-When creating a flow, you can use the command (or any command) as a trigger 
+When creating a flow, you can use the command (or any command) as a trigger
 to start the flow.
-In the 'then' part, you can select your RM-Pro-plus device, and select the 
+In the 'then' part, you can select your RM-Pro-plus device, and select the
 command from the list of available commands.
 
-If you like to use a button to send a command, you can create a Virtual Device, 
+If you like to use a button to send a command, you can create a Virtual Device,
 which will trigger a flow (as described above).
 
-   
 # Compatibility
 
 A large number of devices are compatible with eachother.
@@ -126,7 +103,7 @@ If you have a device which should be supported, but is not recognized by this Br
 you can set the '**Compatibility Mode**' in the App settings.
 Once set, a discovered device will be added as the type you are trying to install.
 This will work if you install the correct device. If you install a wrong device (e.g trying
-to install a SP1 switch, but the device is a RM3 Mini), your device will not work. 
+to install a SP1 switch, but the device is a RM3 Mini), your device will not work.
 
 The following table lists which devices are already added as compatible to the app:
 

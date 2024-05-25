@@ -10,22 +10,9 @@
   },
   "class": "other",
   "capabilities": [
-    "learnIRcmd"
+    "learnIRcmd",
+    "learningState"
   ],
-  "mobile": {
-    "components": [
-      {
-        "id": "icon",
-        "capabilities": []
-      },
-      {
-        "id": "button",
-        "capabilities": [
-          "learnIRcmd"
-        ]
-      }
-    ]
-  },
   "pair": [
     {
       "$template": "start",

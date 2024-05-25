@@ -67,7 +67,7 @@ class DooyaDriver extends BroadlinkDriver {
 	 */
 	onPair(session) {
 		super.onPair(session);
-		//this._utils.debugLog('dooya.onPair')
+		//this._utils.debugLog(this, 'dooya.onPair')
 
 		session.setHandler('properties_set', async (data) => {
 			// data = { 'deviceList': deviceData }

@@ -79,7 +79,7 @@ class HysenDevice extends BroadlinkDevice {
 			}
 			await drv.trigger_parentalmode_toggle.trigger(this, {}, {})
 		}
-		catch (err) { this._utils.debugLog("**> hysen._trigger_parentalmode: error = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen._trigger_parentalmode: error = " + err) }
 	}
 
 	_updateCapabilities() {
@@ -291,7 +291,7 @@ class HysenDevice extends BroadlinkDevice {
 			return resp
 		}
 		else {
-			//this._utils.debugLog( "**> hysen.send_request: Errorcode "+response.error + " in response")
+			//this._utils.debugLog(this,  "**> hysen.send_request: Errorcode "+response.error + " in response")
 			throw ("**> hysen.send_request: error = " + response.error)
 		}
 	}
@@ -304,7 +304,7 @@ class HysenDevice extends BroadlinkDevice {
 			var payload = new Uint8Array([0x01, 0x03, 0x00, 0x00, 0x00, 0x08])
 			var response = await this.send_request(payload)
 
-			//this._utils.debugLog("==> hysen.get_temperature: " + this._utils.asHex(response))
+			//this._utils.debugLog(this, "==> hysen.get_temperature: " + this._utils.asHex(response))
 
 			this.data['RoomTemperature'] = response[5] / 2.0;
 			this.data['TargetTemperature'] = response[6] / 2.0;
@@ -312,7 +312,7 @@ class HysenDevice extends BroadlinkDevice {
 
 			this._updateCapabilities();
 		}
-		catch (err) { this._utils.debugLog("**> hysen.get_temperature - catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.get_temperature - catch = " + err) }
 	}
 
 
@@ -324,7 +324,7 @@ class HysenDevice extends BroadlinkDevice {
 			var payload = new Uint8Array([0x01, 0x03, 0x00, 0x00, 0x00, 0x16]);
 			var response = await this.send_request(payload);
 
-			//this._utils.debugLog("==> hysen.get_full_status - " + this._utils.asHex(response));
+			//this._utils.debugLog(this, "==> hysen.get_full_status - " + this._utils.asHex(response));
 
 			this.data['ParentalMode'] = (response[3] & 1) ? true : false;
 			this.data['power'] = response[4] & 1;
@@ -367,7 +367,7 @@ class HysenDevice extends BroadlinkDevice {
 			this._updateAllSettings();
 
 		}
-		catch (err) { this._utils.debugLog("**> hysen.get_full_status - catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.get_full_status - catch = " + err) }
 	}
 
 
@@ -393,7 +393,7 @@ class HysenDevice extends BroadlinkDevice {
 			var payload = new Uint8Array([0x01, 0x06, 0x00, 0x02, mode_byte, sensor]);
 			await this.send_request(payload);
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_mode: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_mode: catch = " + err) }
 	}
 
 
@@ -460,7 +460,7 @@ class HysenDevice extends BroadlinkDevice {
 
 			await this.send_request(payload);
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_advanced: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_advanced: catch = " + err) }
 	}
 
 
@@ -472,7 +472,7 @@ class HysenDevice extends BroadlinkDevice {
 			let payload = new Uint8Array([0x01, 0x06, 0x00, 0x01, 0x00, temp * 2]);
 			await this.send_request(payload);
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_target_temperature: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_target_temperature: catch = " + err) }
 	}
 
 
@@ -485,7 +485,7 @@ class HysenDevice extends BroadlinkDevice {
 			let payload = new Uint8Array([0x01, 0x06, 0x00, 0x00, ParentalMode ? 1 : 0, power]);
 			await this.send_request(payload);
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_power: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_power: catch = " + err) }
 	}
 
 
@@ -502,7 +502,7 @@ class HysenDevice extends BroadlinkDevice {
 			let payload = new Uint8Array([0x01, 0x10, 0x00, 0x08, 0x00, 0x02, 0x04, hour, minute, second, day]);
 			await this.send_request(payload);
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_time: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_time: catch = " + err) }
 	}
 
 
@@ -521,7 +521,7 @@ class HysenDevice extends BroadlinkDevice {
 	*/
 	async set_schedule(schedule) {
 		try {
-			//this._utils.debugLog("==> hysen.set_schedule")
+			//this._utils.debugLog(this, "==> hysen.set_schedule")
 
 			// Begin with some magic values ...
 			let input_payload = new Uint8Array([0x01, 0x10, 0x00, 0x0a, 0x00, 0x0c, 0x18]);
@@ -539,7 +539,7 @@ class HysenDevice extends BroadlinkDevice {
 
 			await this.send_request(this._utils.concatTypedArrays(input_payload, payload));
 		}
-		catch (err) { this._utils.debugLog("**> hysen.set_schedule: catch = " + err) }
+		catch (err) { this._utils.debugLog(this, "**> hysen.set_schedule: catch = " + err) }
 	}
 
 
@@ -567,10 +567,10 @@ class HysenDevice extends BroadlinkDevice {
 					await this.get_full_status()
 					await this.get_temperature()
 				}
-				catch (error) { this._utils.debugLog("**> HysenDevice.onInit: catch = " + error) }
+				catch (error) { this._utils.debugLog(this, "**> HysenDevice.onInit: catch = " + error) }
 			}.bind(this), 4000);  // timeout in [msec]
 		}
-		catch (error) { this._utils.debugLog("**> HysenDevice.onInit: catch = " + error) }
+		catch (error) { this._utils.debugLog(this, "**> HysenDevice.onInit: catch = " + error) }
 	}
 
 

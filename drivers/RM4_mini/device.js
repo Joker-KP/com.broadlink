@@ -16,252 +16,267 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const BroadlinkDevice = require('../../lib/BroadlinkDevice');
-const DataStore = require('../../lib/DataStore.js')
-
+const BroadlinkDevice = require("../../lib/BroadlinkDevice");
+const DataStore = require("../../lib/DataStore.js");
 
 class RM4miniDevice extends BroadlinkDevice {
+  /**
+   * Store the given name at the first available place in settings.
+   * i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
+   */
+  async storeCmdSetting(cmdname) {
+    let settings = this.getSettings();
 
+    var idx = 0;
+    let settingName = "RcCmd" + idx;
+    while (settingName in settings) {
+      this._utils.debugLog(this, settingName);
+      if (settings[settingName].length == 0) {
+        this._utils.debugLog(
+          this,
+          this.getName() + " - storeCmdSettings - setting = " + settingName + ", name = " + cmdname
+        );
+        let s = {
+          [settingName]: cmdname,
+        };
+        await this.setSettings(s);
+        break;
+      }
+      idx++;
+      settingName = "RcCmd" + idx;
+    }
+  }
 
-	/**
-	 * Store the given name at the first available place in settings.
-	 * i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
-	 */
-	async storeCmdSetting(cmdname) {
+  /**
+   * During device initialisation, make sure the commands
+   * in the datastore are identical to the device settings.
+   */
+  updateSettings() {
+    let settings = this.getSettings();
 
-		let settings = this.getSettings()
+    // clear all settings
+    var idx = 0;
+    let settingName = "RcCmd" + idx;
+    while (settingName in settings) {
+      this.setSettings({ [settingName]: "" });
+      idx++;
+      settingName = "RcCmd" + idx;
+    }
 
-		var idx = 0;
-		let settingName = 'RcCmd' + idx;
-		while (settingName in settings) {
-			this._utils.debugLog(settingName);
-			if (settings[settingName].length == 0) {
-				this._utils.debugLog(this.getName() + ' - storeCmdSettings - setting = ' + settingName + ', name = ' + cmdname);
-				let s = {
-					[settingName]: cmdname
-				}
-				await this.setSettings(s);
-				break;
-			}
-			idx++;
-			settingName = 'RcCmd' + idx;
-		}
-	}
+    // set all settings to dataStore names
+    idx = 0;
+    settingName = "RcCmd" + idx;
+    this.dataStore.getCommandNameList().forEach((s) => {
+      this.setSettings({ [settingName]: s });
+      idx++;
+      settingName = "RcCmd" + idx;
+    });
+  }
 
+  /**
+   * Sends the given command to the device and triggers the flows
+   *
+   * @param  args['variable'] = command with name
+   */
+  async executeCommand(args) {
+    try {
+      let cmd = args["variable"];
 
-	/**
-	 * During device initialisation, make sure the commands
-	 * in the datastore are identical to the device settings.
-	 */
-	updateSettings() {
+      this._utils.debugLog(this, "executeCommand " + cmd.name);
 
-		let settings = this.getSettings()
+      // send the command
+      let cmdData = this.dataStore.getCommandData(cmd.name);
+      await this._communicate.send_IR_RF_data_red(cmdData);
+      cmdData = null;
 
-		// clear all settings
-		var idx = 0;
-		let settingName = 'RcCmd' + idx;
-		while (settingName in settings) {
-			this.setSettings({ [settingName]: "" });
-			idx++;
-			settingName = 'RcCmd' + idx;
-		}
+      let drv = this.getDriver();
+      // RC_specific_sent: user entered command name
+      drv.rm4_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
 
-		// set all settings to dataStore names
-		idx = 0;
-		settingName = 'RcCmd' + idx;
-		this.dataStore.getCommandNameList().forEach(s => {
-			this.setSettings({ [settingName]: s });
-			idx++;
-			settingName = 'RcCmd' + idx;
-		});
-	}
+      // RC_sent_any: set token
+      drv.rm4_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
+    } catch (e) {}
 
-	/**
-	 * Sends the given command to the device and triggers the flows
-	 *
-	 * @param  args['variable'] = command with name
-	 */
-	async executeCommand(args) {
+    return Promise.resolve(true);
+  }
 
-		try {
-			let cmd = args['variable'];
+  /**
+   * Get a list of all command-names
+   *
+   * @return  the command-name list
+   */
+  onAutoComplete() {
+    let lst = [];
+    let names = this.dataStore.getCommandNameList();
+    for (var i = names.length - 1; i >= 0; i--) {
+      let item = {
+        name: names[i],
+      };
+      lst.push(item);
+    }
+    return lst;
+  }
 
-			this._utils.debugLog('executeCommand ' + cmd.name);
+  /**
+   *
+   */
+  check_condition_specific_cmd_sent(args, state) {
+    return Promise.resolve(args.variable.name === state.variable);
+  }
 
-			// send the command
-			let cmdData = this.dataStore.getCommandData(cmd.name)
-			await this._communicate.send_IR_RF_data_red(cmdData)
-			cmdData = null;
+  /**
+   *
+   */
+  async onInit() {
+    super.onInit();
 
-			let drv = this.getDriver();
-			// RC_specific_sent: user entered command name
-			drv.rm4_specific_cmd_trigger.trigger(this, {}, { 'variable': cmd.name })
+    // Ensure the learnIRcmd capability exists and set its initial value
+    if (!this.hasCapability("learnIRcmd")) {
+      await this.addCapability("learnIRcmd");
+    }
+    this.setCapabilityValue("learnIRcmd", false).catch(this.error);
 
-			// RC_sent_any: set token
-			drv.rm4_any_cmd_trigger.trigger(this, { 'CommandSent': cmd.name }, {})
+    // Ensure the learningState capability exists and set its initial value
+    if (!this.hasCapability("learningState")) {
+      await this.addCapability("learningState");
+    }
+    this.setCapabilityValue("learningState", false).catch(this.error);
 
-		} catch (e) { ; }
+    this.registerCapabilityListener("learnIRcmd", this.onCapabilityLearnIR.bind(this));
 
-		return Promise.resolve(true)
-	}
+    this.dataStore = new DataStore(this.getData().mac);
+    await this.dataStore.readCommands(async () => {
+      this.updateSettings();
+    });
+  }
 
+  /**
+   * This method will be called when the learn state needs to be changed.
+   * @param onoff
+   */
+   async onCapabilityLearnIR(onoff) {
+    if (!onoff) {
+      this.learn = false;
+      return true;
+    }
 
-	/**
-	 * Get a list of all command-names
-	 *
-	 * @return  the command-name list
-	 */
-	onAutoComplete() {
-		let lst = []
-		let names = this.dataStore.getCommandNameList()
-		for (var i = names.length - 1; i >= 0; i--) {
-			let item = {
-				"name": names[i]
-			};
-			lst.push(item)
-		}
-		return lst;
-	}
+    if (this.learn) {
+      return false;
+    }
 
+    this.learn = true;
+    this.setCapabilityValue("learningState", true);
+    this._utils.debugLog(this, "Starting IR learning mode");
 
-	/**
-	 *
-	 */
-	check_condition_specific_cmd_sent(args, state) {
-		return Promise.resolve(args.variable.name === state.variable)
-	}
+    try {
+      await this._communicate.enter_learning();
+      this._utils.debugLog(this, "Entered learning mode");
+      let data = await this._communicate.check_IR_data();
+      this._utils.debugLog(this, "Checked IR data, data: " + data);
 
+      if (data) {
+        let idx = this.dataStore.dataArray.length + 1;
+        let cmdname = "cmd" + idx;
+        this.dataStore.addCommand(cmdname, data);
 
+        await this.storeCmdSetting(cmdname);
+        this._utils.debugLog(this, "Stored command: " + cmdname);
+        this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after success
+        this.setCapabilityValue("learningState", false);
+        setTimeout(() => this.setWarning(null), 5000, await this.setWarning("Stored command: " + cmdname));
+        this.learn = false;
+        return true;
+      } else {
+        this._utils.debugLog(this, "No IR data received");
+        this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after failure
+        this.setCapabilityValue("learningState", false);
+        setTimeout(() => this.setWarning(null), 5000, await this.setWarning("IR learning timed out, no data received."));
+        this.learn = false;
+        return false;
+      }
+    } catch (e) {
+      this._utils.debugLog(this, "Error during IR learning: " + e);
+      this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after error
+      this.setCapabilityValue("learningState", false);
+      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`IR learning failed: ${e}`));
+      this.learn = false;
+      return false;
+    }
+  }
 
-	/**
-	 *
-	 */
-	onInit() {
-		super.onInit();
-		this.registerCapabilityListener('learnIRcmd', this.onCapabilityLearnIR.bind(this));
-		this.setCapabilityValue('learnIRcmd', false); // Turn off the capability after error
+  /**
+   * Called when the device settings are changed by the user
+   * (so NOT called on programmatically changing settings)
+   *
+   *  @param oldSettingsObj   contains the previous settings object
+   *  @param newSettingsObj   contains the new settings object
+   *  @param changedKeysArr   contains an array of keys that have been changed
+   *  @return {Promise<void>}
+   */
+  async onSettings({ oldSettings, newSettings, changedKeys }) {
+    this._utils.debugLog(this, "Settings changed:", changedKeys);
+    //this._utils.debugLog(this, 'Old settings:', oldSettings);
+    //this._utils.debugLog(this, 'New settings:', newSettings);
 
-		this.dataStore = new DataStore(this.getData().mac)
-		this.dataStore.readCommands(this.updateSettings.bind(this));
-	}
+    for (let i = 0; i < changedKeys.length; i++) {
+      const key = changedKeys[i];
+      const oldName = oldSettings[key] || "";
+      const newName = newSettings[key] || "";
 
+      this._utils.debugLog(this, `Changed setting key: ${key}, Old value: ${oldName}, New value: ${newName}`);
 
-	/**
-	 * This method will be called when the learn state needs to be changed.
-	 * @param onoff
-	 */
-	async onCapabilityLearnIR(onoff) {
-		if (!onoff) {
-			this.learn = false;
-			return true;
-		}
+      if (newName && newName.length > 0) {
+        if (oldName && oldName.length > 0) {
+          if (this.dataStore.findCommand(newName) >= 0) {
+            this._utils.debugLog(this, `Error: Command ${newName} already exists`);
+            throw new Error(this.homey.__("errors.save_settings_exist", { cmd: newName }));
+          }
+          // Rename the command if the old name exists and new name is provided
+          if (this.dataStore.renameCommand(oldName, newName)) {
+            this._utils.debugLog(this, `Command renamed from ${oldName} to ${newName}`);
+          } else {
+            this._utils.debugLog(this, `Failed to rename command ${oldName} to ${newName}`);
+          }
+        } else {
+          this._utils.debugLog(this, `Error: No old command found for new command ${newName}`);
+          throw new Error(this.homey.__("errors.save_settings_nocmd", { cmd: newName }));
+        }
+      } else {
+        if (oldName && oldName.length > 0) {
+          this.dataStore.deleteCommand(oldName);
+          this._utils.debugLog(this, `Command ${oldName} deleted.`);
+        }
+      }
 
-		if (this.learn) {
-			return false;
-		}
+      if (key === "ipAddress" && this._communicate) {
+        this._communicate.setIPaddress(newSettings.ipAddress);
+        this._utils.debugLog(this, `IP Address changed from ${oldSettings.ipAddress} to ${newSettings.ipAddress}`);
+      }
 
-		this.learn = true;
-		this._utils.debugLog('Starting IR learning mode');
+      if (key === "Authenticate" && newName === true) {
+        this._utils.debugLog(this, "Re-authenticating device due to settings change");
+        await this.authenticateDevice();
 
-		try {
-			await this._communicate.enter_learning();
-			this._utils.debugLog('Entered learning mode');
-			let data = await this._communicate.check_IR_data();
-			this._utils.debugLog('Checked IR data, data: ' + data);
+        // Defer resetting the Authenticate setting
+        process.nextTick(async () => {
+          await this.setSettings({ Authenticate: false }).catch((e) => {
+            this._utils.debugLog(this, "Error resetting Authenticate setting:", e.toString());
+          });
+        });
+      }
+    }
 
-			if (data) {
-				let idx = this.dataStore.dataArray.length + 1;
-				let cmdname = 'cmd' + idx;
-				this.dataStore.addCommand(cmdname, data);
+    this._utils.debugLog(this, "Settings successfully updated.");
+  }
 
-				await this.storeCmdSetting(cmdname);
-				this._utils.debugLog('Stored command: ' + cmdname);
-				await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after success
-				this.learn = false;
-				return true;
-			} else {
-				this._utils.debugLog('No IR data received');
-				await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after failure
-				this.learn = false;
-				return false;
-			}
-		} catch (e) {
-			this._utils.debugLog('Error during IR learning: ' + e);
-			await this.setCapabilityValue('learnIRcmd', false).catch(this.error); // Turn off the capability after error
-			this.learn = false;
-			return false;
-		}
-	}
-
-
-	/**
-	 * Called when the device settings are changed by the user
-	 * (so NOT called on programmatically changing settings)
-	 *
-	 *  @param oldSettingsObj   contains the previous settings object
-	 *  @param newSettingsObj   contains the new settings object
-	 *  @param changedKeysArr   contains an array of keys that have been changed
-	 *  @return {Promise<void>}
-	 */
-	async onSettings({ oldSettings, newSettings, changedKeys }) {
-		this._utils.debugLog('Settings changed:', changedKeys);
-		this._utils.debugLog('Old settings:', oldSettings);
-		this._utils.debugLog('New settings:', newSettings);
-
-		let i = 0;
-		let oldName = '';
-		let newName = '';
-
-		// Verify all settings
-		for (i = 0; i < changedKeys.length; i++) {
-			oldName = oldSettings[changedKeys[i]] || '';
-			newName = newSettings[changedKeys[i]] || '';
-
-			this._utils.debugLog(`Changed setting key: ${changedKeys[i]}, Old value: ${oldName}, New value: ${newName}`);
-
-			// Ensure oldName and newName are defined before checking length
-			if (newName && newName.length > 0) {
-				if (oldName && oldName.length > 0) {
-					if (this.dataStore.findCommand(newName) >= 0) {
-						this._utils.debugLog(`Error: Command ${newName} already exists`);
-						throw new Error(this.homey.__('errors.save_settings_exist', { 'cmd': newName }));
-					}
-				} else {
-					this._utils.debugLog(`Error: No old command found for new command ${newName}`);
-					throw new Error(this.homey.__('errors.save_settings_nocmd', { 'cmd': newName }));
-				}
-			}
-		}
-
-		// All settings OK, process them
-		for (i = 0; i < changedKeys.length; i++) {
-			oldName = oldSettings[changedKeys[i]] || '';
-			newName = newSettings[changedKeys[i]] || '';
-
-			this._utils.debugLog(`Processing setting key: ${changedKeys[i]}, Old value: ${oldName}, New value: ${newName}`);
-
-			if (newName && newName.length > 0) {
-				this.dataStore.renameCommand(oldName, newName);
-			} else {
-				this.dataStore.deleteCommand(oldName);
-			}
-		}
-
-		this._utils.debugLog('Settings successfully updated.');
-	}
-
-
-
-	/**
-	 * This method will be called when a device has been removed.
-	 */
-	onDeleted() {
-		this.dataStore.deleteAllCommands();
-	}
-
-
+  /**
+   * This method will be called when a device has been removed.
+   */
+  onDeleted() {
+    this.dataStore.deleteAllCommands();
+  }
 }
 
 module.exports = RM4miniDevice;

@@ -4,9 +4,10 @@
 		"en": "Learn RF command",
 		"nl": "Leer RF commando"
 	},
-	"getable": false,
+	"getable": true,
 	"setable": true,
 	"insights" : true,
+	"uiComponent": "button",
 	"insightsTitleTrue": {
         "en": "Learning mode activated",
         "nl": "Leer modus geactiveerd"
