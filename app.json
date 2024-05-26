@@ -5589,11 +5589,11 @@
       "icon": "/assets/learningState.svg"
     },
     "learnIRcmd": {
-      "type": "boolean",
       "title": {
         "en": "Learn IR command",
         "nl": "Leer IR commando"
       },
+      "type": "boolean",
       "getable": true,
       "setable": true,
       "insights": true,

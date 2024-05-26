@@ -34,10 +34,7 @@ class RM4miniDevice extends BroadlinkDevice {
     while (settingName in settings) {
       this._utils.debugLog(this, settingName);
       if (settings[settingName].length == 0) {
-        this._utils.debugLog(
-          this,
-          this.getName() + " - storeCmdSettings - setting = " + settingName + ", name = " + cmdname
-        );
+        this._utils.debugLog(this, this.getName() + " - storeCmdSettings - setting = " + settingName + ", name = " + cmdname);
         let s = {
           [settingName]: cmdname,
         };
@@ -156,54 +153,68 @@ class RM4miniDevice extends BroadlinkDevice {
    * This method will be called when the learn state needs to be changed.
    * @param onoff
    */
-   async onCapabilityLearnIR(onoff) {
-    if (!onoff) {
-      this.learn = false;
-      return true;
+  async onCapabilityLearnIR(onoff) {
+    this._utils.debugLog(this, `onCapabilityLearnIR called with onoff: ${onoff}`);
+
+    if (this.learnTimeout) {
+      clearTimeout(this.learnTimeout); // Clear any existing timeout
     }
 
-    if (this.learn) {
-      return false;
-    }
-
-    this.learn = true;
-    this.setCapabilityValue("learningState", true);
-    this._utils.debugLog(this, "Starting IR learning mode");
-
-    try {
-      await this._communicate.enter_learning();
-      this._utils.debugLog(this, "Entered learning mode");
-      let data = await this._communicate.check_IR_data();
-      this._utils.debugLog(this, "Checked IR data, data: " + data);
-
-      if (data) {
-        let idx = this.dataStore.dataArray.length + 1;
-        let cmdname = "cmd" + idx;
-        this.dataStore.addCommand(cmdname, data);
-
-        await this.storeCmdSetting(cmdname);
-        this._utils.debugLog(this, "Stored command: " + cmdname);
-        this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after success
-        this.setCapabilityValue("learningState", false);
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning("Stored command: " + cmdname));
+    this.learnTimeout = setTimeout(async () => {
+      if (!onoff) {
+        this._utils.debugLog(this, "Turning off learning mode");
         this.learn = false;
+        await this.setCapabilityValue("learnIRcmd", false).catch(this.error);
+        await this.setCapabilityValue("learningState", false).catch(this.error);
         return true;
-      } else {
-        this._utils.debugLog(this, "No IR data received");
-        this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after failure
-        this.setCapabilityValue("learningState", false);
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning("IR learning timed out, no data received."));
+      }
+
+      if (this.learn) {
+        this._utils.debugLog(this, "Learning mode already active, not restarting");
+        return false;
+      }
+
+      this.learn = true;
+      await this.setCapabilityValue("learningState", true).catch(this.error);
+      this._utils.debugLog(this, "Starting IR learning mode");
+
+      try {
+        await this._communicate.enter_learning();
+        this._utils.debugLog(this, "Entered learning mode");
+
+        let data = await this._communicate.check_IR_data();
+        this._utils.debugLog(this, `Checked IR data, data: ${data}`);
+
+        if (data) {
+          let idx = this.dataStore.dataArray.length + 1;
+          let cmdname = "cmd" + idx;
+          this.dataStore.addCommand(cmdname, data);
+
+          await this.storeCmdSetting(cmdname);
+          this._utils.debugLog(this, `Stored command: ${cmdname}`);
+
+          await this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after success
+          await this.setCapabilityValue("learningState", false).catch(this.error);
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`Stored command: ${cmdname}`));
+          this.learn = false;
+          return true;
+        } else {
+          this._utils.debugLog(this, "No IR data received");
+          await this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after failure
+          await this.setCapabilityValue("learningState", false).catch(this.error);
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning("IR learning timed out, no data received."));
+          this.learn = false;
+          return false;
+        }
+      } catch (e) {
+        this._utils.debugLog(this, `Error during IR learning: ${e}`);
+        await this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after error
+        await this.setCapabilityValue("learningState", false).catch(this.error);
+        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`IR learning failed: ${e}`));
         this.learn = false;
         return false;
       }
-    } catch (e) {
-      this._utils.debugLog(this, "Error during IR learning: " + e);
-      this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after error
-      this.setCapabilityValue("learningState", false);
-      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`IR learning failed: ${e}`));
-      this.learn = false;
-      return false;
-    }
+    }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
 
   /**
