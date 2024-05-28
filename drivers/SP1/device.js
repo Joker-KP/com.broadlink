@@ -41,7 +41,9 @@ class SP1Device extends BroadlinkDevice {
 		this.generate_trigger(mode)
 		try {
 			await this._communicate.sp1_set_power_state(mode)
-		} catch (e) { ; }
+        } catch (e) {
+            this.error('Error in set_onoff', e);
+        }
 	}
 
 	check_condition_on() {

@@ -67,7 +67,9 @@ class SP2Device extends BroadlinkDevice {
 			state = ((response[0] == 1) || (response[0] == 3));
 			this.generate_trigger_power(state);
 			this.setCapabilityValue('onoff.power', state);
-		} catch (e) { ; }
+        } catch (e) {
+            this.error('Error in onCheckInterval', e);
+        }
 	}
 
 
@@ -79,8 +81,9 @@ class SP2Device extends BroadlinkDevice {
 			let response = await this._communicate.sp2_get_energy();
 			let energy = response[3] * 256 + response[2] + (response[1] / 100.0);
 			return energy;
-		} catch (e) {
-			return 0;
+        } catch (e) {
+            this.error('Error in get_energy', e);
+            return 0;
 		}
 	}
 
@@ -92,8 +95,9 @@ class SP2Device extends BroadlinkDevice {
 		try {
 			let response = await this._communicate.read_status()
 			return ((response[0] == 2) || (response[0] == 3));
-		} catch (e) {
-			return false;
+        } catch (e) {
+            this.error('Error in check_nightlight', e);
+            return false;
 		}
 	}
 
@@ -122,8 +126,9 @@ class SP2Device extends BroadlinkDevice {
 		try {
 			let response = await this._communicate.read_status()
 			return ((response[0] == 1) || (response[0] == 3));
-		} catch (e) {
-			return false;
+        } catch (e) {
+            this.error('Error in check_power', e);
+            return false;
 		}
 	}
 
@@ -151,7 +156,9 @@ class SP2Device extends BroadlinkDevice {
 		this.generate_trigger_power(mode);
 		try {
 			await this.adjust_power(mode)
-		} catch (e) { ; }
+        } catch (e) {
+            this.error('Error in set_power', e);
+        }
 	}
 
 
@@ -162,7 +169,9 @@ class SP2Device extends BroadlinkDevice {
 		this.generate_trigger_nightlight(mode);
 		try {
 			this.adjust_nightlight(mode)
-		} catch (e) { ; }
+        } catch (e) {
+            this.error('Error in set_nightlight', e);
+        }
 	}
 
 
