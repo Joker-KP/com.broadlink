@@ -1,0 +1,5 @@
+{
+  "3.1.1": {
+    "en": "SDK3 update by fkmeland:, RMx - fixed rename of stored commands, fixed reading of commands upon restart, removal of obsolete Node.JS modules, added Insights/device logs, added new sensor capability indicating device learning state, learn. button reflects current state of operations, improved logging, added titleFormatted and some others, "
+  }
+}
