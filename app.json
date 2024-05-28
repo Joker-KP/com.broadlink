@@ -3161,8 +3161,8 @@
       ],
       "id": "RM3_mini",
       "name": {
-        "en": "RM3 Mini",
-        "nl": "RM3 Mini"
+        "en": "RM3 Mini & Mini Red",
+        "nl": "RM3 Mini & Mini Red"
       },
       "images": {
         "large": "./drivers/RM3_mini/assets/images/large.jpg",
@@ -4058,22 +4058,9 @@
       },
       "class": "other",
       "capabilities": [
-        "learnIRcmd"
+        "learnIRcmd",
+        "learningState"
       ],
-      "mobile": {
-        "components": [
-          {
-            "id": "icon",
-            "capabilities": []
-          },
-          {
-            "id": "button",
-            "capabilities": [
-              "learnIRcmd"
-            ]
-          }
-        ]
-      },
       "pair": [
         {
           "id": "start"
@@ -4979,7 +4966,8 @@
       },
       "class": "other",
       "capabilities": [
-        "learnIRcmd"
+        "learnIRcmd",
+        "learnRFcmd"
       ],
       "mobile": {
         "components": [
@@ -4991,6 +4979,12 @@
             "id": "button",
             "capabilities": [
               "learnIRcmd"
+            ]
+          },
+          {
+            "id": "button",
+            "capabilities": [
+              "learnRFcmd"
             ]
           }
         ]

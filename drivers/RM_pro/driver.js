@@ -16,36 +16,34 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-"use strict";
+'use strict';
 
-const BroadlinkRM3miniDriver = require("./../RM3_mini/driver");
+const BroadlinkRM3miniDriver = require('./../RM3_mini/driver');
 
 class BroadlinkRMProDriver extends BroadlinkRM3miniDriver {
-  async onInit() {
-    super.onInit();
-    this.setCompatibilityID(0x273d); // RM PRO
-	
-    // Initialize and register flow card action for sending command specific to RM Pro
-    this.rmpro_action_send_cmd = this.homey.flow.getActionCard("send_command_rmpro");
-    this.rmpro_action_send_cmd
-      .registerRunListener(this.do_exec_cmd.bind(this))
-      .getArgument("variable")
-      .registerAutocompleteListener((query, args) => {
-        return args.device.onAutoComplete();
-      });
 
-    // Register a function to fill the trigger-flowcard 'RC_specific_sent' for RM Pro (see app.json)
-    this.rmpro_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_specific_sent_rmpro");
-    this.rmpro_specific_cmd_trigger
-      .registerRunListener(this.check_condition_specific_cmd.bind(this))
-      .getArgument("variable")
-      .registerAutocompleteListener((query, args) => {
-        return args.device.onAutoComplete();
-      });
+    async onInit() {
+        super.onInit();
+        this.setCompatibilityID(0x273d);  // RM PRO
 
-    // Register any command trigger for RM Pro
-    this.rmpro_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rmpro");
-  }
+        // Initialize and register flow card action for sending command specific to RM Pro
+        this.rmpro_action_send_cmd = this.homey.flow.getActionCard('send_command_rmpro');
+        this.rmpro_action_send_cmd
+            .registerRunListener(this.do_exec_cmd.bind(this))
+            .getArgument('variable')
+            .registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); });
+
+        // Register a function to fill the trigger-flowcard 'RC_specific_sent' for RM Pro (see app.json)
+        this.rmpro_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard('RC_specific_sent_rmpro');
+        this.rmpro_specific_cmd_trigger
+            .registerRunListener(this.check_condition_specific_cmd.bind(this))
+            .getArgument('variable')
+            .registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); });
+
+        // Register any command trigger for RM Pro
+        this.rmpro_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard('RC_sent_any_rmpro');
+    }
 }
 
 module.exports = BroadlinkRMProDriver;
+

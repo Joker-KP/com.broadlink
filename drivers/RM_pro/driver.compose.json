@@ -9,7 +9,7 @@
     "small": ".{{driverAssetsPath}}/images/small.jpg"
   },
   "class": "other",
-  "capabilities": ["learnIRcmd"],
+  "capabilities": ["learnIRcmd", "learnRFcmd"],
   "mobile": {
     "components": [
       {
@@ -19,6 +19,10 @@
       {
         "id": "button",
         "capabilities": ["learnIRcmd"]
+      },
+      {
+        "id": "button",
+        "capabilities": ["learnRFcmd"]
       }
     ]
   },

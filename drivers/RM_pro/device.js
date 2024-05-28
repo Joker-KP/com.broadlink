@@ -20,10 +20,92 @@
 
 const RM3MiniDevice = require('./../RM3_mini/device');
 
-
 class RmProDevice extends RM3MiniDevice {
 
+    async onInit() {
+        super.onInit();
+        this.learn = false;
 
+        this.registerCapabilityListener('learnRFcmd', this.onCapabilityLearnRF.bind(this));
+    }
+
+    async stopRfLearning() {
+        try {
+            await this._communicate.cancelRFSweep();
+        } catch (e) {
+            this._utils.debugLog(this, '**> stopRfLearning: ' + e)
+        }
+        this.learn = false;
+    }
+
+    async onCapabilityLearnRF(onoff) {
+        if (this.learn) {
+            return true;
+        }
+        this.learn = true;
+
+        let type = this.getData().devtype;
+        try {
+            var data;
+            await this._communicate.enterRFSweep();
+
+            if (this.homey.speechOutput) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'));
+            } else {
+                await this.homey.notifications.createNotification({
+                    excerpt: this.homey.__('rf_learn.long_press')
+                });
+            }
+
+            await this._communicate.checkRFData();
+
+            if (this.homey.speechOutput) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'));
+            } else {
+                await this.homey.notifications.createNotification({
+                    excerpt: this.homey.__('rf_learn.multi_presses')
+                });
+            }
+
+            if ((type == 0x279D) || (type == 0x27A9)) {
+                await this._communicate.enter_learning();
+                data = await this._communicate.check_IR_data();
+            } else {
+                data = await this._communicate.checkRFData2();
+            }
+            if (data) {
+                let idx = this.dataStore.dataArray.length + 1;
+                let cmdname = 'rf-cmd' + idx;
+                this.dataStore.addCommand(cmdname, data);
+                await this.storeCmdSetting(cmdname);
+            }
+            await this.stopRfLearning();
+
+            if (this.homey.speechOutput) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+            } else {
+                await this.homey.notifications.createNotification({
+                    excerpt: this.homey.__('rf_learn.done')
+                });
+            }
+
+            return true;
+
+        } catch (e) {}
+
+        this._utils.debugLog(this, '**> Learning RF failed');
+
+        if (this.homey.speechOutput) {
+            await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+        } else {
+            await this.homey.notifications.createNotification({
+                excerpt: this.homey.__('rf_learn.done')
+            });
+        }
+
+        await this.stopRfLearning();
+        return false;
+    }
 }
 
 module.exports = RmProDevice;
