@@ -16,17 +16,36 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const BroadlinkRM3miniDriver = require('./../RM3_mini/driver');
-
+const BroadlinkRM3miniDriver = require("./../RM3_mini/driver");
 
 class BroadlinkRMPlusDriver extends BroadlinkRM3miniDriver {
+	
+  async onInit() {
+    super.onInit();
+    this.setCompatibilityID(0x272a); // RM Pro Plus 2
+    // Initialize and register flow card action for sending command specific to RM Plus
+    this.rmplus_action_send_cmd = this.homey.flow.getActionCard("send_command_rmplus");
+    this.rmplus_action_send_cmd
+      .registerRunListener(this.do_exec_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
 
-	async onInit() {
-		super.onInit();
-		this.setCompatibilityID(0x272A);  // RM Pro Plus 2
-	}
+    // Register a function to fill the trigger-flowcard 'RC_specific_sent' for RM Plus (see app.json)
+    this.rmplus_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_specific_sent_rmplus");
+    this.rmplus_specific_cmd_trigger
+      .registerRunListener(this.check_condition_specific_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
+
+    // Register any command trigger for RM Plus
+    this.rmplus_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rmplus");
+  }
 }
 
 module.exports = BroadlinkRMPlusDriver;
