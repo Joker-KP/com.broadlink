@@ -42,7 +42,7 @@ class DooyaDevice extends BroadlinkDevice {
 			this.setCapabilityValue('windowcoverings_closed', closedState)
 		}
 		else {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			if (closedState) {
 				drv.trigger_closed.trigger(this, {}, {})
 			}

@@ -101,7 +101,7 @@ class RM4ProDevice extends BroadlinkDevice {
       await this._communicate.send_IR_RF_data_red(cmdData);
       cmdData = null;
 
-      let drv = this.getDriver();
+      let drv = this.driver;
       // RC_specific_sent: user entered command name
       drv.rm4_pro_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
 

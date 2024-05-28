@@ -28,7 +28,7 @@ class SP2Device extends BroadlinkDevice {
 
 	generate_trigger_nightlight(mode) {
 		if (mode != this.getCapabilityValue('onoff.nightlight')) {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			drv.trigger_nightlight_toggle.trigger(this, {}, {})
 			if (mode) {
 				drv.trigger_nightlight_on.trigger(this, {}, {})
@@ -41,7 +41,7 @@ class SP2Device extends BroadlinkDevice {
 
 	generate_trigger_power(mode) {
 		if (mode != this.getCapabilityValue('onoff.power')) {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			drv.trigger_power_toggle.trigger(this, {}, {})
 			if (mode) {
 				drv.trigger_power_on.trigger(this, {}, {})

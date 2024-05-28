@@ -225,7 +225,7 @@ class A1Device extends BroadlinkDevice {
 			this.setCapabilityValue('measure_temperature', temperature);
 			this.setCapabilityValue('measure_humidity', humidity);
 
-			let drv = this.getDriver();
+			let drv = this.driver;
 			if (curr_air_quality != this.air_quality) { drv.a1_trigger_air_quality.trigger(this, { 'airquality': str_air_quality }, {}) }
 			if (curr_light != this.light_level) { drv.a1_trigger_light_level.trigger(this, { 'lightlevel': str_light }, {}) }
 			if (curr_noise != this.noise_level) { drv.a1_trigger_noise_level.trigger(this, { 'noiselevel': str_noise }, {}) }

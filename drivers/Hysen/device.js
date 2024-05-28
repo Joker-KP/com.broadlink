@@ -70,7 +70,7 @@ class HysenDevice extends BroadlinkDevice {
 
 	async _trigger_parentalmode() {
 		try {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			if (this.data['ParentalMode']) {
 				await drv.trigger_parentalmode_on.trigger(this, {}, {})
 			}

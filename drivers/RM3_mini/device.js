@@ -101,7 +101,7 @@ class RM3miniDevice extends BroadlinkDevice {
       await this._communicate.send_IR_RF_data(cmdData);
       cmdData = null;
 
-      let drv = this.getDriver();
+      let drv = this.driver;
       // RC_specific_sent: user entered command name
       drv.rm3mini_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
 

@@ -27,7 +27,7 @@ class MP1Device extends BroadlinkDevice {
 	generate_trigger(sid, mode) {
 		let capa = 'onoff.s' + sid
 		if (mode != this.getCapabilityValue(capa)) {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			drv.trigger_toggle.trigger(this, {}, { "switchID": sid })
 			if (mode) {
 				drv.trigger_on.trigger(this, {}, { "switchID": sid })

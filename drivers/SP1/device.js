@@ -26,7 +26,7 @@ class SP1Device extends BroadlinkDevice {
 
 	generate_trigger(mode) {
 		if (mode != this.getCapabilityValue('onoff')) {
-			let drv = this.getDriver();
+			let drv = this.driver;
 			drv.trigger_toggle.trigger(this, {}, {})
 			if (mode) {
 				drv.trigger_on.trigger(this, {}, {})
