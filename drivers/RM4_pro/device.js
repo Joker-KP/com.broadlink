@@ -32,12 +32,9 @@ class RM4ProDevice extends BroadlinkDevice {
     var idx = 0;
     let settingName = "RcCmd" + idx;
     while (settingName in settings) {
-      this._utils.debugLog(this, settingName);
+      //this._utils.debugLog(this,  settingName );
       if (settings[settingName].length == 0) {
-        this._utils.debugLog(
-          this,
-          this.getName() + " - storeCmdSettings - setting = " + settingName + ", name = " + cmdname
-        );
+        //this._utils.debugLog(this, this.getName()+' - storeCmdSettings - setting = '+settingName+', name = ' + cmdname );
         let s = {
           [settingName]: cmdname,
         };
@@ -55,8 +52,9 @@ class RM4ProDevice extends BroadlinkDevice {
    */
   updateSettings() {
     let settings = this.getSettings();
+    console.log("**> Current settings before update:", settings);
 
-    // clear all settings
+    // Clear all settings
     var idx = 0;
     let settingName = "RcCmd" + idx;
     while (settingName in settings) {
@@ -65,14 +63,26 @@ class RM4ProDevice extends BroadlinkDevice {
       settingName = "RcCmd" + idx;
     }
 
-    // set all settings to dataStore names
+    // Set all settings to dataStore names
     idx = 0;
     settingName = "RcCmd" + idx;
+    const updates = {};
     this.dataStore.getCommandNameList().forEach((s) => {
-      this.setSettings({ [settingName]: s });
+      updates[settingName] = s;
+      console.log(`**> Setting ${settingName} set to ${s}`);
       idx++;
       settingName = "RcCmd" + idx;
     });
+
+    this.setSettings(updates)
+      .then(() => {
+        // Log the updated settings after saving
+        const updatedSettings = this.getSettings();
+        console.log("**> Updated settings:", updatedSettings);
+      })
+      .catch((err) => {
+        console.log("**> Error updating settings:", err);
+      });
   }
 
   /**
