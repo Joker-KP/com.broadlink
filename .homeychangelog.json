@@ -10,5 +10,8 @@
   },
   "3.1.4": {
     "en": "Improved logging for SP1/SP2, fixes for SP1/SP2 + specific payloads for 0x5f36 / RM Mini 3 Red Bean"
+  },
+  "3.1.5": {
+    "en": "Added device details upon start into logs"
   }
 }
