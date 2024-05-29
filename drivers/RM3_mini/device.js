@@ -204,7 +204,7 @@ class RM3miniDevice extends BroadlinkDevice {
         const deviceType = this.getData().devtype;
         this._utils.debugLog(this, `Device type: ${deviceType}`);
 
-        if (devType === 24374) { // 0x5F36 in decimal Red Bean
+        if (deviceType === 24374) { // 0x5F36 in decimal Red Bean
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
           await this._communicate.enter_learning_red();
         } else {
@@ -213,7 +213,7 @@ class RM3miniDevice extends BroadlinkDevice {
         }
 
         let data;
-        if (devType === 24374) { // 0x5F36 in decimal Red Bean
+        if (deviceType === 24374) { // 0x5F36 in decimal Red Bean
           data = await this._communicate.check_IR_data_red();
         } else {
           data = await this._communicate.check_IR_data();
