@@ -100,7 +100,7 @@ class RM3miniDevice extends BroadlinkDevice {
       let cmdData = this.dataStore.getCommandData(cmd.name);
 
       const devType = this.getData().devtype;
-      if (devType === 0x5f36) {
+      if (devType === 24374) { // 0x5F36 in decimal Red Bean
         await this._communicate.send_IR_RF_data_red(cmdData);
       } else {
         await this._communicate.send_IR_RF_data(cmdData);
@@ -204,7 +204,7 @@ class RM3miniDevice extends BroadlinkDevice {
         const deviceType = this.getData().devtype;
         this._utils.debugLog(this, `Device type: ${deviceType}`);
 
-        if (deviceType === 0x5f36) {
+        if (devType === 24374) { // 0x5F36 in decimal Red Bean
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
           await this._communicate.enter_learning_red();
         } else {
@@ -213,7 +213,7 @@ class RM3miniDevice extends BroadlinkDevice {
         }
 
         let data;
-        if (deviceType === 0x5f36) {
+        if (devType === 24374) { // 0x5F36 in decimal Red Bean
           data = await this._communicate.check_IR_data_red();
         } else {
           data = await this._communicate.check_IR_data();
