@@ -55,7 +55,9 @@ class SP2Device extends BroadlinkDevice {
 
 	async onCheckInterval() {
 		try {
+			this._utils.debugLog(this, 'onCheckInterval called');
 			let energy = await this.get_energy()
+			this._utils.debugLog(this, `Energy reading: ${energy}`);
 			this.setCapabilityValue('measure_power', energy);
 
 			let response = await this._communicate.read_status()
@@ -125,6 +127,7 @@ class SP2Device extends BroadlinkDevice {
 	async check_power() {
 		try {
 			let response = await this._communicate.read_status()
+			this._utils.debugLog(this, `Power status response: ${response}`);
 			return ((response[0] == 1) || (response[0] == 3));
         } catch (e) {
             this.error('Error in check_power', e);
@@ -137,6 +140,7 @@ class SP2Device extends BroadlinkDevice {
 	 * Sets the power state of the smart plug.
 	 */
 	async adjust_power(state) {
+		this._utils.debugLog(this, `adjust_power called with state: ${state}`);
 		let onoff = await this.check_nightlight()
 		let level = 0;
 		if (onoff) {
@@ -222,6 +226,27 @@ class SP2Device extends BroadlinkDevice {
 		super.onInit();
 		this.registerCapabilityListener('onoff.power', this.onCapabilityPowerOnOff.bind(this));
 		this.registerCapabilityListener('onoff.nightlight', this.onCapabilityNightLightOnOff.bind(this));
+	
+		// Read the interval value from checkinterval.json
+		const driverSettings = this.driver.getSettings();
+		const checkIntervalMinutes = driverSettings.CheckInterval || 5; // Default to 5 minutes if not set
+		const checkIntervalMillis = checkIntervalMinutes * 60 * 1000; // Convert minutes to milliseconds
+	
+		this._utils.debugLog(this, `Setting check interval to ${checkIntervalMinutes} minutes (${checkIntervalMillis} milliseconds)`);
+		
+		// Set up interval to check power readings based on the interval from settings
+		this.checkInterval = setInterval(this.onCheckInterval.bind(this), checkIntervalMillis);
+	
+		// Initial call to get power readings
+		this.onCheckInterval();
+	}
+
+	onDeleted() {
+		this.log("Device deleted: " + this.getData().id);
+	
+		if (this.checkInterval) {
+			clearInterval(this.checkInterval);
+		}
 	}
 
 }

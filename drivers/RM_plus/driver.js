@@ -16,7 +16,7 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-"use strict";
+'use strict';
 
 const BroadlinkRM3miniDriver = require("./../RM3_mini/driver");
 
