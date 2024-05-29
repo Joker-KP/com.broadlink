@@ -224,21 +224,42 @@ class SP2Device extends BroadlinkDevice {
 
 	async onInit() {
 		super.onInit();
+	
+		this._utils.debugLog(this, "Device initializing...");
+	
 		this.registerCapabilityListener('onoff.power', this.onCapabilityPowerOnOff.bind(this));
 		this.registerCapabilityListener('onoff.nightlight', this.onCapabilityNightLightOnOff.bind(this));
 	
-		// Read the interval value from checkinterval.json
-		const driverSettings = this.driver.getSettings();
-		const checkIntervalMinutes = driverSettings.CheckInterval || 5; // Default to 5 minutes if not set
-		const checkIntervalMillis = checkIntervalMinutes * 60 * 1000; // Convert minutes to milliseconds
+		this._utils.debugLog(this, "Capability listeners registered");
 	
-		this._utils.debugLog(this, `Setting check interval to ${checkIntervalMinutes} minutes (${checkIntervalMillis} milliseconds)`);
-		
-		// Set up interval to check power readings based on the interval from settings
-		this.checkInterval = setInterval(this.onCheckInterval.bind(this), checkIntervalMillis);
+		try {
+			// Read the interval value from settings
+			const settings = this.getSettings();
+			let checkIntervalMinutes;
 	
-		// Initial call to get power readings
-		this.onCheckInterval();
+			if (typeof settings["CheckInterval"] === 'number') {
+				this._utils.debugLog(this, `Polling interval is set: ${settings["CheckInterval"]} minutes`);
+				checkIntervalMinutes = parseInt(settings["CheckInterval"], 10); // Safely parse it to an integer
+			} else {
+				// Default value set if CheckInterval is not defined or is incorrectly set
+				await this.setSettings({ CheckInterval: 5 }); // Use await to ensure settings are applied (5 minutes)
+				this._utils.debugLog(this, "Polling interval was undefined, set to default: 5 minutes");
+				checkIntervalMinutes = 5; // Set interval to default after ensuring settings are applied
+			}
+	
+			const checkIntervalMillis = checkIntervalMinutes * 60 * 1000; // Convert minutes to milliseconds
+	
+			this._utils.debugLog(this, `Check interval set to ${checkIntervalMinutes} minutes (${checkIntervalMillis} milliseconds)`);
+	
+			// Set up interval to check power readings based on the interval from settings
+			this.checkInterval = setInterval(this.onCheckInterval.bind(this), checkIntervalMillis);
+	
+			// Initial call to get power readings
+			this._utils.debugLog(this, "Initial call to onCheckInterval");
+			this.onCheckInterval();
+		} catch (e) {
+			this.error('Error during onInit', e);
+		}
 	}
 
 	onDeleted() {
