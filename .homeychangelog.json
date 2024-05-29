@@ -16,5 +16,8 @@
   },
   "3.1.6": {
     "en": "Prevent crashes in the arrToHex "
+  },
+  "3.1.7": {
+    "en": "Another RM3 Mini driver adjustment for Red Bean"
   }
 }
