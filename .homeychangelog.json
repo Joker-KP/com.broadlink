@@ -28,5 +28,8 @@
   },
   "3.1.10": {
     "en": "Another adjustments for RM3 Red Bean"
+  },
+  "3.1.11": {
+    "en": "Final adjustments for RM3 Red Bean + fix of polling for SPx devices"
   }
 }
