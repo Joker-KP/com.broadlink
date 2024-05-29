@@ -168,7 +168,7 @@ class RM3miniDevice extends BroadlinkDevice {
    */
   async onCapabilityLearnIR(onoff) {
     this._utils.debugLog(this, `onCapabilityLearnIR called with onoff: ${onoff}`);
-    
+
     if (this.learnTimeout) {
       clearTimeout(this.learnTimeout); // Clear any existing timeout
     }
@@ -192,10 +192,19 @@ class RM3miniDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "Starting IR learning mode");
 
       try {
-        await this._communicate.enter_learning();
-        this._utils.debugLog(this, "Entered learning mode");
+        // Check device type and call appropriate methods
+        const deviceType = this.getData().devtype;
+        let data;
+        if (deviceType === 0x5f36 || deviceType === 24374) {
+          await this._communicate.enter_learning_red();
+          this._utils.debugLog(this, "Entered learning mode (Red Bean)");
+          data = await this._communicate.check_IR_data_red();
+        } else {
+          await this._communicate.enter_learning();
+          this._utils.debugLog(this, "Entered learning mode");
+          data = await this._communicate.check_IR_data();
+        }
 
-        let data = await this._communicate.check_IR_data();
         this._utils.debugLog(this, `Checked IR data, data: ${data}`);
 
         if (data) {
@@ -229,7 +238,6 @@ class RM3miniDevice extends BroadlinkDevice {
       }
     }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
-
 
   /**
    * Called when the device settings are changed by the user
