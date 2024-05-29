@@ -205,6 +205,7 @@ class RM3miniDevice extends BroadlinkDevice {
         this._utils.debugLog(this, `Device type: ${deviceType}`);
 
         if (deviceType == 0x5F36) { // 0x5F36 in decimal Red Bean
+
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
           await this._communicate.enter_learning_red();
         } else {
