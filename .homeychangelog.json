@@ -13,5 +13,8 @@
   },
   "3.1.5": {
     "en": "Added device details upon start into logs"
+  },
+  "3.1.6": {
+    "en": "Prevent crashes in the arrToHex "
   }
 }
