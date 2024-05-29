@@ -16,7 +16,7 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 const BroadlinkDevice = require("./../../lib/BroadlinkDevice");
 const DataStore = require("./../../lib/DataStore.js");
@@ -192,16 +192,21 @@ class RM3miniDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "Starting IR learning mode");
 
       try {
-        // Check device type and call appropriate methods
         const deviceType = this.getData().devtype;
-        let data;
-        if (deviceType === 0x5f36 || deviceType === 24374) {
+        this._utils.debugLog(this, `Device type: ${deviceType}`);
+
+        if (deviceType === 0x5f36) {
+          this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
           await this._communicate.enter_learning_red();
-          this._utils.debugLog(this, "Entered learning mode (Red Bean)");
+        } else {
+          this._utils.debugLog(this, "Using enter_learning for other RM devices");
+          await this._communicate.enter_learning();
+        }
+
+        let data;
+        if (deviceType === 0x5f36) {
           data = await this._communicate.check_IR_data_red();
         } else {
-          await this._communicate.enter_learning();
-          this._utils.debugLog(this, "Entered learning mode");
           data = await this._communicate.check_IR_data();
         }
 
