@@ -98,7 +98,14 @@ class RM3miniDevice extends BroadlinkDevice {
 
       // send the command
       let cmdData = this.dataStore.getCommandData(cmd.name);
-      await this._communicate.send_IR_RF_data(cmdData);
+
+      const devType = this.getData().devtype;
+      if (devType === 0x5f36) {
+        await this._communicate.send_IR_RF_data_red(cmdData);
+      } else {
+        await this._communicate.send_IR_RF_data(cmdData);
+      }
+
       cmdData = null;
 
       let drv = this.driver;
@@ -107,7 +114,9 @@ class RM3miniDevice extends BroadlinkDevice {
 
       // RC_sent_any: set token
       drv.rm3mini_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
-    } catch (e) {}
+    } catch (e) {
+      this._utils.debugLog(this, `Error executing command: ${e}`);
+    }
 
     return Promise.resolve(true);
   }
