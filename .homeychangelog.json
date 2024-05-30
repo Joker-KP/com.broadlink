@@ -40,5 +40,8 @@
   },
   "3.1.14": {
     "en": "Another adjustment for BroadlinkUtils"
+  },
+  "3.1.15": {
+    "en": "Adjustments for RM3 RedBean and RM4 check_IR_data(red) function"
   }
 }
