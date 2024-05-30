@@ -215,7 +215,7 @@ class RM3miniDevice extends BroadlinkDevice {
 
         let data;
         if (deviceType == 0x5F36) { // 0x5F36 in decimal Red Bean
-          data = await this._communicate.check_IR_data_red();
+          data = await this._communicate.check_IR_data();
         } else {
           data = await this._communicate.check_IR_data();
         }

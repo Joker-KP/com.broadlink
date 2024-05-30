@@ -182,7 +182,7 @@ class RM4miniDevice extends BroadlinkDevice {
         await this._communicate.enter_learning();
         this._utils.debugLog(this, "Entered learning mode");
 
-        let data = await this._communicate.check_IR_data();
+        let data = await this._communicate.check_IR_data_red();
         this._utils.debugLog(this, `Checked IR data, data: ${data}`);
 
         if (data) {
