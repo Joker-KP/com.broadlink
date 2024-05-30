@@ -24,7 +24,7 @@ const BroadlinkDevice = require('./../../lib/BroadlinkDevice');
 class DooyaDevice extends BroadlinkDevice {
 
 	async onInit() {
-		super.onInit();
+		await super.onInit();
 		this.registerCapabilityListener('button.open', this.onCapabilityOpen.bind(this));
 		this.registerCapabilityListener('button.close', this.onCapabilityClose.bind(this));
 		this.registerCapabilityListener('button.stop', this.onCapabilityStop.bind(this));

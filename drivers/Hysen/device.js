@@ -557,7 +557,7 @@ class HysenDevice extends BroadlinkDevice {
 
 	async onInit() {
 		try {
-			super.onInit();
+			await super.onInit();
 			this.data = [];
 			this.registerCapabilityListener('target_temperature', this.onCapabilityTargetTemperature.bind(this));
 			this.registerCapabilityListener('parental_mode', this.onCapabilityParentalMode.bind(this));

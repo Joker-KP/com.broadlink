@@ -69,7 +69,8 @@ class SP1Device extends BroadlinkDevice {
 	}
 
 	async onInit() {
-		super.onInit();
+		await super.onInit();
+		this._utils.debugLog(this, "SP1 Device onInit called");
 		this.registerCapabilityListener('onoff', this.onCapabilityOnOff.bind(this));
 	}
 }

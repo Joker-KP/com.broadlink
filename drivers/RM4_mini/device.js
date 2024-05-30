@@ -127,8 +127,8 @@ class RM4miniDevice extends BroadlinkDevice {
    *
    */
   async onInit() {
-    super.onInit();
-
+    await super.onInit();
+    this._utils.debugLog(this, "RM4 Mini Device onInit called");
     // Ensure the learnIRcmd capability exists and set its initial value
     if (!this.hasCapability("learnIRcmd")) {
       await this.addCapability("learnIRcmd");

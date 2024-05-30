@@ -49,8 +49,8 @@ var NoiseLevel = Object.freeze({
 class A1Device extends BroadlinkDevice {
 
 
-	onInit() {
-		super.onInit();
+	async onInit() {
+		await super.onInit();
 		this.registerCapabilityListener('updateSensor', this.onCapabilityUpdateSensor.bind(this));
 		this.air_quality = AirQualityLevel.unknown.value;
 		this.light_level = LightLevel.unknown.value;

@@ -223,8 +223,8 @@ class SP2Device extends BroadlinkDevice {
 	}
 
 	async onInit() {
-		super.onInit();
-	
+		await super.onInit();
+		this._utils.debugLog(this, "SP2/SP3 Device onInit called");
 		this._utils.debugLog(this, "Device initializing...");
 	
 		this.registerCapabilityListener('onoff.power', this.onCapabilityPowerOnOff.bind(this));

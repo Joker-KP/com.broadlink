@@ -20,111 +20,113 @@
 
 const RM3MiniDevice = require('./../RM3_mini/device');
 
-
 class RmPlusDevice extends RM3MiniDevice {
 
+    async onInit() {
+        await super.onInit();
+        this.learn = false;
+        this._utils.debugLog(this, "RM Plus Device onInit called");
+        this.registerCapabilityListener('learnRFcmd', this.onCapabilityLearnRF.bind(this));
+    }
 
-	async onInit() {
-		super.onInit();
-		this.learn = false;
+    onCapabilityLearnMode() {
+        return false;
+    }
 
-		this.registerCapabilityListener('learnRFcmd', this.onCapabilityLearnRF.bind(this));
-	}
+    /**
+     * 
+     */
+    async stopRfLearning() {
+        try {
+            await this._communicate.cancelRFSweep();
+        } catch (e) {
+            this._utils.debugLog(this, '**> stopRfLearning: ' + e);
+        }
+        this.learn = false;
+    }
 
+    /**
+     * This method will be called when the learn state needs to be changed.
+     * @param onoff
+     * @return \c TRUE if successful, \c FALSE otherwise
+     */
+    async onCapabilityLearnRF(onoff) {
+        if (this.learn) {
+            return true;
+        }
+        this.learn = true;
 
-	onCapabilityLearnMode() {
-		return false;
-	}
+        let type = this.getData().devtype;
+        try {
+            var data;
+            await this._communicate.enterRFSweep();
 
+            if (this.isSpeechOutputAvailable()) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'));
+            } else {
+                setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__('rf_learn.long_press')));
+            }
 
-	/**
-	 * 
-	 */
-	async stopRfLearning() {
-		try {
-			await this._communicate.cancelRFSweep();
-		} catch (e) {
-			this._utils.debugLog(this, '**> stopRfLearning: ' + e)
-		}
-		this.learn = false;
-	}
+            await this._communicate.checkRFData();
 
+            if (this.isSpeechOutputAvailable()) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'));
+            } else {
+                setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__('rf_learn.multi_presses')));
+            }
 
-	/**
-	 * This method will be called when the learn state needs to be changed.
-	 * @param onoff
-	 * @return \c TRUE if successful, \c FALSE otherwise
-	 */
-	async onCapabilityLearnRF(onoff) {
-		if (this.learn) {
-			return true;
-		}
-		this.learn = true;
+            if ((type == 0x279D) || (type == 0x27A9)) {
+                await this._communicate.enter_learning();
+                data = await this._communicate.check_IR_data();
+            } else {
+                data = await this._communicate.checkRFData2();
+            }
+            if (data) {
+                let idx = this.dataStore.dataArray.length + 1;
+                let cmdname = 'rf-cmd' + idx;
+                this.dataStore.addCommand(cmdname, data);
+                await this.storeCmdSetting(cmdname);
+            }
+            await this.stopRfLearning();
 
-		let type = this.getData().devtype
-		try {
-			var data;
-			await this._communicate.enterRFSweep()
+            if (this.isSpeechOutputAvailable()) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+            } else {
+                setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__('rf_learn.done')));
+            }
 
-			if (this.homey.speechOutput) {
-				await this.homey.speechOutput.say(this.homey.__('rf_learn.long_press'));
-			} else {
-				await this.homey.notifications.createNotification({
-					excerpt: this.homey.__('rf_learn.long_press')
-				});
-			}
+            return true;
 
-			await this._communicate.checkRFData()
+        } catch (e) {
+            this._utils.debugLog(this, '**> Learning RF failed');
 
-			if (this.homey.speechOutput) {
-				await this.homey.speechOutput.say(this.homey.__('rf_learn.multi_presses'));
-			} else {
-				await this.homey.notifications.createNotification({
-					excerpt: this.homey.__('rf_learn.multi_presses')
-				});
-			}
+            if (this.isSpeechOutputAvailable()) {
+                await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
+            } else {
+                setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__('rf_learn.done')));
+            }
 
-			if ((type == 0x279D) || (type == 0x27A9)) {
-				await this._communicate.enter_learning()
-				data = await this._communicate.check_IR_data()
-			}
-			else {
-				data = await this._communicate.checkRFData2()
-			}
-			if (data) {
-				let idx = this.dataStore.dataArray.length + 1;
-				let cmdname = 'rf-cmd' + idx;
-				this.dataStore.addCommand(cmdname, data);
-				await this.storeCmdSetting(cmdname);
-			}
-			await this.stopRfLearning();
+            await this.stopRfLearning();
+            return false;
+        }
+    }
 
-			if (this.homey.speechOutput) {
-				await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
-			} else {
-				await this.homey.notifications.createNotification({
-					excerpt: this.homey.__('rf_learn.done')
-				});
-			}
+    /**
+     * Checks if speech output is available on the current platform
+     * @returns {boolean}
+     */
+    isSpeechOutputAvailable() {
+        const platform = this.homey.platform;
+        const platformVersion = this.homey.platformVersion;
 
-			return true;
+        // Assume local platform and version 1 if undefined
+        if (platform === undefined || platformVersion === undefined) {
+            return false;
+        }
 
-		} catch (e) { }
-
-		this._utils.debugLog(this, '**> Learing RF failed')
-
-		if (this.homey.speechOutput) {
-			await this.homey.speechOutput.say(this.homey.__('rf_learn.done'));
-		} else {
-			await this.homey.notifications.createNotification({
-				excerpt: this.homey.__('rf_learn.done')
-			});
-		}
-
-		await this.stopRfLearning();
-		return false;
-	}
-
+        // Speech output is only available on Homey (local) platforms
+        return platform === 'local' && platformVersion >= 1;
+    }
 }
 
 module.exports = RmPlusDevice;

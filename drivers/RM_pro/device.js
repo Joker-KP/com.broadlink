@@ -23,9 +23,9 @@ const RM3MiniDevice = require('./../RM3_mini/device');
 class RmProDevice extends RM3MiniDevice {
 
     async onInit() {
-        super.onInit();
+        await super.onInit();
         this.learn = false;
-
+        this._utils.debugLog(this, "RMPro device onInit called");
         this.registerCapabilityListener('learnRFcmd', this.onCapabilityLearnRF.bind(this));
     }
 

@@ -20,3 +20,6 @@ env.json
 
 # Added by Homey CLI
 /.homeybuild/
+.dependencygraph/data.json
+.dependencygraph/setting.json
+.vscode/settings.json

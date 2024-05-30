@@ -103,7 +103,8 @@ class MP1Device extends BroadlinkDevice {
 	onCapabilityOnOff_4(mode) { this.set_onoff("4", mode); return Promise.resolve(); }
 
 	async onInit() {
-		super.onInit();
+		await super.onInit();
+		this._utils.debugLog(this, "MP1 Device onInit called");
 		this.registerCapabilityListener('onoff.s1', this.onCapabilityOnOff_1.bind(this))
 		this.registerCapabilityListener('onoff.s2', this.onCapabilityOnOff_2.bind(this))
 		this.registerCapabilityListener('onoff.s3', this.onCapabilityOnOff_3.bind(this))

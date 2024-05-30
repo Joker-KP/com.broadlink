@@ -23,7 +23,7 @@ const BroadlinkRM3miniDriver = require("./../RM3_mini/driver");
 class BroadlinkRMPlusDriver extends BroadlinkRM3miniDriver {
 
   async onInit() {
-    super.onInit();
+    await super.onInit();
     this.setCompatibilityID(0x272a); // RM Pro Plus 2
 	
     // Initialize and register flow card action for sending command specific to RM Plus
