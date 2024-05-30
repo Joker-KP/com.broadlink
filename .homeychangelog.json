@@ -37,5 +37,8 @@
   },
   "3.1.13": {
     "en": "Adjustments of the BroadlinkUtils library, await initialisation, RM4 icons updated"
+  },
+  "3.1.14": {
+    "en": "Another adjustment for BroadlinkUtils"
   }
 }
