@@ -43,5 +43,8 @@
   },
   "3.1.15": {
     "en": "Adjustments for RM3 RedBean and RM4 check_IR_data(red) function"
+  },
+  "3.1.16": {
+    "en": "Adjustments for RM3 RedBean and RM4 check_IR_data(red) function"
   }
 }
