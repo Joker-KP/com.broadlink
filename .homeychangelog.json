@@ -49,5 +49,8 @@
   },
   "3.1.17": {
     "en": "RMPlus and RM Pro adjustments"
+  },
+  "3.1.18": {
+    "en": "SP2 watts reading adjustments + test for RM3 Mini Red Bean"
   }
 }
