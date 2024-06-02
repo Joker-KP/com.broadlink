@@ -77,7 +77,7 @@ class SP2Device extends BroadlinkDevice {
 
 	/**
 	 *
-	 */
+	 
 	async get_energy() {
 		try {
 			let response = await this._communicate.sp2_get_energy();
@@ -87,7 +87,25 @@ class SP2Device extends BroadlinkDevice {
             this.error('Error in get_energy', e);
             return 0;
 		}
-	}
+	}*/
+ 
+	// Adjustment according to the https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.broadlink2/8a0bca1e0e2f78d1e991c324828a1ca21c5dbd2b/broadlink_fj.js
+
+	async get_energy() {
+		try {
+		  let response = await this._communicate.sp2_get_energy();
+		  let energy = parseFloat(
+			response[7].toString(16) +
+			response[6].toString(16) +
+			response[5].toString(16)
+		  ) / 100.0;
+		  return energy;
+		} catch (e) {
+		  this.error('Error in get_energy', e);
+		  return 0;
+		}
+	  }
+	  
 
 
 	/**
