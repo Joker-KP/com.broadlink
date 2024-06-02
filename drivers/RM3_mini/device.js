@@ -201,7 +201,7 @@ class RM3miniDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "Starting IR learning mode");
 
       try {
-        const deviceType = this.getData().devtype;
+        const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
         this._utils.debugLog(this, `Device type: ${deviceType}`);
 
         if (deviceType == 0x5F36) { // 0x5F36 in decimal Red Bean
