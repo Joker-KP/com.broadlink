@@ -80,12 +80,27 @@ class SP2Device extends BroadlinkDevice {
 
 	async get_energy() {
 		try {
+			this._utils.debugLog(this, 'get_energy called');
 			let response = await this._communicate.sp2_get_energy();
+			
+			// Log the raw response for later analysis
+			this._utils.debugLog(this, `Raw response: ${response}`);
+			
+			// Log the individual bytes in the response
+			for (let i = 0; i < response.length; i++) {
+				this._utils.debugLog(this, `Response byte ${i}: ${response[i]}`);
+			}
+	
+			// Calculate the energy value from the response
 			let energy = response[3] * 256 + response[2] + (response[1] / 100.0);
+			
+			// Log the calculated energy value
+			this._utils.debugLog(this, `Calculated energy: ${energy}`);
+			
 			return energy;
-        } catch (e) {
-            this.error('Error in get_energy', e);
-            return 0;
+		} catch (e) {
+			this.error('Error in get_energy', e);
+			return 0;
 		}
 	}
  
