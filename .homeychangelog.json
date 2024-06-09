@@ -64,5 +64,8 @@
   },
   "3.1.22": {
     "en": "SP2 / SP3 debug log enhancement"
+  },
+  "3.1.23": {
+    "en": "Icons cosmetic RM3/RM4Mini/Pro + fixed settings error for first time instalations + SP3S power reading adjustments"
   }
 }
