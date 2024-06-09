@@ -77,7 +77,7 @@ class SP2Device extends BroadlinkDevice {
 	/**
 	 *
 	 */
-
+/**
 	async get_energy() {
 		try {
 			this._utils.debugLog(this, 'get_energy called');
@@ -103,7 +103,41 @@ class SP2Device extends BroadlinkDevice {
 			return 0;
 		}
 	}
- 
+ */
+
+	async get_energy() {
+		try {
+		  this._utils.debugLog(this, 'get_energy called');
+		  let response = await this._communicate.sp2_get_energy();
+	  
+		  // Log the raw response for later analysis
+		  this._utils.debugLog(this, `Raw response: ${response}`);
+	  
+		  // Log the individual bytes in the response
+		  for (let i = 0; i < response.length; i++) {
+			this._utils.debugLog(this, `Response byte ${i}: ${response[i]}`);
+		  }
+	  
+		  // Extract the relevant bytes (assuming the energy bytes are from 4 to 7 in little-endian format)
+		  let energyBytes = response.slice(4, 8);
+	  
+		  // Log the extracted bytes
+		  this._utils.debugLog(this, `Extracted energy bytes: ${energyBytes}`);
+	  
+		  // Convert to big-endian format (reverse the byte order)
+		  let energyHex = energyBytes.reverse().map(byte => byte.toString(16).padStart(2, '0')).join('');
+		  let energy = parseInt(energyHex, 16) / 100;
+	  
+		  // Log the calculated energy value
+		  this._utils.debugLog(this, `Calculated energy: ${energy}`);
+	  
+		  return energy;
+		} catch (e) {
+		  this.error('Error in get_energy', e);
+		  return 0;
+		}
+	  }
+	  
 		
 	/**
 	 * Returns the night light state of the smart plug.
