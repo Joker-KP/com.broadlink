@@ -14,7 +14,7 @@
   },
   "pair": {
     "title": "Pair Broadlink Device",
-    "intro": "Configure the device with the e-Control app on a smartphone.<br>Get the IP address from your wifi router.",
+    "intro": "Configure the device with the Broadlink / e-Control app on a smartphone, ensure it's NOT locked.<br>Get the IP address from your wifi router.",
 	"cancel": "Cancel",
 	"add": "Add",
 	"address": "IP address",
@@ -31,7 +31,7 @@
   	"title": "Broadlink Debug Settings",
   	"compatinfo": "In compatibility mode, any device found during pairing will be accepted as the selected device type. This means the device paired will be treated as the choosen device type. As a result, not all (if any) of the capablities of the device will work properly",
   	"compatmode": "Compatibility Mode",
-   	"debuginfo": "Write logging text to console. This is only valid if app is loaded in debug mode.",
+    "debuginfo": "Enable this setting before sending your diagnostic report to the developer.",
    	"debuglog" : "Log Mode",
    	"errorreportinfo" : "Error reports using Sentry.IO",
    	"errorreport" : "Sentry.IO"

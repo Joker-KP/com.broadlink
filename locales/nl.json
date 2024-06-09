@@ -14,7 +14,7 @@
   },
   "pair": {
     "title": "Broadlink Apparaat Toevoegen",
-    "intro": "Configureer het apparaat met de e-Control app op een smartphone.<br>Zoek dan het IP adres op de WiFi router.",
+    "intro": "Configureer het apparaat met de Broadlink / e-Control app op een smartphone, zorg ervoor dat het NIET vergrendeld is.<br>Verkrijg het IP-adres van uw wifi-router.",
 	"cancel": "Stop",
 	"add": "Toevoegen",
 	"address": "IP address",
@@ -31,7 +31,7 @@
   	"title": "Broadlink Debug Instellingen",
   	"compatinfo": "In eenheidsmode, ieder apparaat dat gevonden wordt tijdens paren, zal geaccepteerd worden alsof het van het gewenste type is. Dit betekent dat het geinstalleerde apparaat aangesproken wordt alsof het een apparaat van dat type is. Hierdoor zullen niet alle (of zelfs geen enkele) van zijn mogelijkheden naar behoren werken.",
    	"compatmode": "Eenheidsmode",
-   	"debuginfo": "Schrijf log teksten naar console. Werkt alleen als app in debug mode is geladen.",
+   	"debuginfo": "Schakel deze instelling in voordat u uw diagnostisch rapport naar de ontwikkelaar stuurt.",
    	"debuglog" : "Logmode",
    	"errorreportinfo" : "Foutreporten via Sentry.IO",
    	"errorreport" : "Sentry.IO"

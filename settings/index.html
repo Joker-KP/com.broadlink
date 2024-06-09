@@ -5,20 +5,39 @@
     <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
     <script type="text/javascript" src="js/settings.js"></script>
     <link rel="stylesheet" href="css/settings.css">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      fieldset {
+        margin-bottom: 15px;
+      }
+      input[type="checkbox"] {
+        margin-right: 10px;
+      }
+      label {
+        margin-left: 5px;
+      }
+    </style>
   </head>
   <body>
     <h1 data-i18n="settings.title"></h1>
     <fieldset>
       <p data-i18n="settings.compatinfo"></p>
-      <input type="checkbox" id="compatmode"><label for="compatmode" data-i18n="settings.compatmode"></label>
+      <input type="checkbox" id="compatmode">
+      <label for="compatmode" data-i18n="settings.compatmode"></label>
     </fieldset>
     <fieldset>
       <p data-i18n="settings.debuginfo"></p>
-      <input type="checkbox" id="debuglog"><label for="debuglog" data-i18n="settings.debuglog"></label>
+      <input type="checkbox" id="debuglog">
+      <label for="debuglog" data-i18n="settings.debuglog"></label>
     </fieldset>
+    <!--
     <fieldset>
       <p data-i18n="settings.errorreportinfo"></p>
-      <input type="checkbox" id="errorreport"><label for="errorreport" data-i18n="settings.errorreport"></label>
+      <input type="checkbox" id="errorreport">
+      <label for="errorreport" data-i18n="settings.errorreport"></label>
     </fieldset>
+    -->
   </body>
 </html>
