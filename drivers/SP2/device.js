@@ -68,38 +68,6 @@ class SP2Device extends BroadlinkDevice {
     }
   }
 
-  /**
-	 *
-
-
-	async get_energy() {
-		try {
-			this._utils.debugLog(this, 'get_energy called');
-			let response = await this._communicate.sp2_get_energy();
-			
-			// Log the raw response for later analysis
-			this._utils.debugLog(this, `Raw response: ${response}`);
-			
-			// Log the individual bytes in the response
-			for (let i = 0; i < response.length; i++) {
-				this._utils.debugLog(this, `Response byte ${i}: ${response[i]}`);
-			}
-	
-			// Calculate the energy value from the response
-			let energy = response[3] * 256 + response[2] + (response[1] / 100.0);
-			
-			// Log the calculated energy value
-			this._utils.debugLog(this, `Calculated energy: ${energy}`);
-			
-			return energy;
-		} catch (e) {
-			this.error('Error in get_energy', e);
-			return 0;
-		}
-	}
- 
-  	 */
-
   async get_energy() {
     try {
       this._utils.debugLog(this, "get_energy called");
@@ -108,16 +76,14 @@ class SP2Device extends BroadlinkDevice {
       // Log the raw response for later analysis
       this._utils.debugLog(this, `Raw response: ${response}`);
 
-      // Log the individual bytes in the response
-      for (let i = 0; i < response.length; i++) {
-        this._utils.debugLog(this, `Response byte ${i}: ${response[i]}`);
-      }
+      // Extract the bytes 0x7, 0x6, and 0x5 and convert them to a hex string in reverse order
+      let energyHex = [
+        response[7].toString(16).padStart(2, "0"),
+        response[6].toString(16).padStart(2, "0"),
+        response[5].toString(16).padStart(2, "0"),
+      ].join("");
 
-      // Decrypt the payload
-      let decryptedPayload = this._communicate.decrypt(response);
-
-      // Calculate the energy value from the decrypted payload
-      let energyHex = decryptedPayload.slice(0x07, 0x04).reverse().toString("hex");
+      // Convert hex string to integer and divide by 100
       let energy = parseInt(energyHex, 16) / 100.0;
 
       // Log the calculated energy value
@@ -257,7 +223,6 @@ class SP2Device extends BroadlinkDevice {
   async onInit() {
     await super.onInit();
     this._utils.debugLog(this, "SP2/SP3 Device onInit called");
-    this._utils.debugLog(this, "Device initializing...");
 
     this.registerCapabilityListener("onoff.power", this.onCapabilityPowerOnOff.bind(this));
     this.registerCapabilityListener("onoff.nightlight", this.onCapabilityNightLightOnOff.bind(this));
@@ -291,6 +256,52 @@ class SP2Device extends BroadlinkDevice {
       this.onCheckInterval();
     } catch (e) {
       this.error("Error during onInit", e);
+    }
+  }
+
+  async onSettings({ oldSettings, newSettings, changedKeys }) {
+    if (changedKeys.length > 0) {
+      try {
+        this._utils.debugLog(this, "Settings changed:", changedKeys);
+
+        changedKeys.forEach((key) => {
+          this._utils.debugLog(
+            this,
+            `Changed setting key: ${key}, Old value: ${oldSettings[key]}, New value: ${newSettings[key]}`
+          );
+
+          if (key === "ipAddress" && newSettings.ipAddress) {
+            this._utils.debugLog(this, `Updating IP address to ${newSettings.ipAddress}`);
+            this._communicate.setIPaddress(newSettings.ipAddress);
+          }
+          if (key === "CheckInterval" && newSettings.CheckInterval) {
+            this._utils.debugLog(this, `Updating CheckInterval to ${newSettings.CheckInterval}`);
+            this.stop_check_interval();
+            this.start_check_interval(newSettings.CheckInterval);
+          }
+          if (key === "Authenticate") {
+            this._utils.debugLog(this, "Re-authenticating device due to settings change");
+            let deviceData = this.getData();
+            let options = {
+              ipAddress: this.getSettings().ipAddress,
+              mac: this._utils.hexToArr(deviceData.mac),
+              count: Math.floor(Math.random() * 0xffff),
+              id: null,
+              key: null,
+              homey: this.homey,
+              deviceType: parseInt(deviceData.devtype, 16),
+            };
+            this._communicate.configure(options);
+            this.authenticateDevice();
+          }
+        });
+      } catch (err) {
+        this._utils.debugLog(this, "Error handling settings change: ", err);
+        throw new Error("Settings could not be updated: " + err.message);
+      }
+      this.log("Broadlink settings changed:\n", changedKeys);
+    } else {
+      this.log("No settings were changed");
     }
   }
 

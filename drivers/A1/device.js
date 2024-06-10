@@ -236,6 +236,52 @@ class A1Device extends BroadlinkDevice {
 
 	}
 
+	async onSettings({ oldSettings, newSettings, changedKeys }) {
+		if (changedKeys.length > 0) {
+
+			try {
+				this._utils.debugLog(this, 'Settings changed:', changedKeys);
+
+				changedKeys.forEach(key => {
+					this._utils.debugLog(this, `Changed setting key: ${key}, Old value: ${oldSettings[key]}, New value: ${newSettings[key]}`);
+
+					if (key === 'ipAddress' && newSettings.ipAddress) {
+						this._utils.debugLog(this, `Updating IP address to ${newSettings.ipAddress}`);
+						this._communicate.setIPaddress(newSettings.ipAddress);
+					}
+					if (key === 'CheckInterval' && newSettings.CheckInterval) {
+						this._utils.debugLog(this, `Updating CheckInterval to ${newSettings.CheckInterval}`);
+						this.stop_check_interval();
+						this.start_check_interval(newSettings.CheckInterval);
+					}
+					if (key === 'Authenticate') {
+						this._utils.debugLog(this, "Re-authenticating device due to settings change");
+						let deviceData = this.getData();
+						let options = {
+						  ipAddress: this.getSettings().ipAddress,
+						  mac: this._utils.hexToArr(deviceData.mac),
+						  count: Math.floor(Math.random() * 0xffff),
+						  id: null,
+						  key: null,
+						  homey: this.homey,
+						  deviceType: parseInt(deviceData.devtype, 16),
+						};
+						this._communicate.configure(options);
+						this.authenticateDevice();
+					}
+				});
+			} catch (err) {
+				this._utils.debugLog(this, 'Error handling settings change: ', err);
+				throw new Error('Settings could not be updated: ' + err.message);
+			}
+			this.log('Broadlink settings changed:\n', changedKeys);
+		}
+		else {
+			this.log('No settings were changed');
+
+		}
+	}
+
 
 }
 
