@@ -67,5 +67,8 @@
   },
   "3.1.23": {
     "en": "Icons cosmetic RM3/RM4Mini/Pro + fixed settings error for first time instalations + SP3S power reading adjustments"
+  },
+  "3.1.24": {
+    "en": "Logging adjustment, SP3S logging, autentification from settings did not work for RM4"
   }
 }
