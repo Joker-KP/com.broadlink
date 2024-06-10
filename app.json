@@ -1102,7 +1102,7 @@
       {
         "id": "a1_noise_level_softer",
         "title": {
-          "en": "Noise Level is !{{softer|not softer} than",
+          "en": "Noise Level is !{{softer|not softer}} than",
           "nl": "Geluidsniveau is !{{zachter|niet zachter}} dan"
         },
         "titleFormatted": {
@@ -1750,33 +1750,6 @@
         "a1_light_level_number",
         "a1_noise_level_number"
       ],
-      "mobile": {
-        "components": [
-          {
-            "id": "icon",
-            "capabilities": [
-              "updateSensor"
-            ]
-          },
-          {
-            "id": "sensor",
-            "capabilities": [
-              "a1_air_quality",
-              "a1_noise_level",
-              "a1_light_level",
-              "measure_temperature",
-              "measure_humidity"
-            ],
-            "options": {
-              "icons": {
-                "a1_air_quality": "/assets/airquality.svg",
-                "a1_noise_level": "/assets/noiselevel.svg",
-                "a1_light_level": "/assets/lightlevel.svg"
-              }
-            }
-          }
-        ]
-      },
       "pair": [
         {
           "id": "start"

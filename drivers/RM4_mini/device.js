@@ -16,7 +16,7 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 const BroadlinkDevice = require("../../lib/BroadlinkDevice");
 const DataStore = require("../../lib/DataStore.js");
@@ -268,6 +268,17 @@ class RM4miniDevice extends BroadlinkDevice {
 
       if (key === "Authenticate" && newName === true) {
         this._utils.debugLog(this, "Re-authenticating device due to settings change");
+        let deviceData = this.getData();
+        let options = {
+          ipAddress: this.getSettings().ipAddress,
+          mac: this._utils.hexToArr(deviceData.mac),
+          count: Math.floor(Math.random() * 0xffff),
+          id: null,
+          key: null,
+          homey: this.homey,
+          deviceType: parseInt(deviceData.devtype, 16),
+        };
+        this._communicate.configure(options);
         await this.authenticateDevice();
 
         // Defer resetting the Authenticate setting
@@ -287,6 +298,10 @@ class RM4miniDevice extends BroadlinkDevice {
    */
   onDeleted() {
     this.dataStore.deleteAllCommands();
+    this.stop_check_interval();
+    this._utils.debugLog(this, "Device deleted");
+    this._communicate.destroy();
+    this._communicate = null;
   }
 }
 

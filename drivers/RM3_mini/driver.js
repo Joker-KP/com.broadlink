@@ -18,41 +18,40 @@
 
 'use strict';
 
-const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-
+const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
 
 class BroadlinkRM3miniDriver extends BroadlinkDriver {
+  async onInit() {
+    super.onInit({
+      CompatibilityID: 0x2737 // RM3 Mini
+    });
+    this.rm3mini_action_send_cmd = this.homey.flow.getActionCard("send_command_rm3mini");
+    this.rm3mini_action_send_cmd
+      .registerRunListener(this.do_exec_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
 
+    // Register a function to fill the trigger-flowcard 'RC_specific_sent' (see app.json)
+    this.rm3mini_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_specific_sent_rm3mini");
+    this.rm3mini_specific_cmd_trigger
+      .registerRunListener(this.check_condition_specific_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
 
-	check_condition_specific_cmd(args, state) {
-		return args.device.check_condition_specific_cmd_sent(args, state)
-	}
+    this.rm3mini_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rm3mini");
+  }
 
-	do_exec_cmd(args, state) {
-		return args.device.executeCommand(args);
-	}
+  check_condition_specific_cmd(args, state) {
+    return args.device.check_condition_specific_cmd_sent(args, state);
+  }
 
-
-	async onInit() {
-		super.onInit();
-		this.setCompatibilityID(0x2737)   // RM MINI
-
-		this.rm3mini_action_send_cmd = this.homey.flow.getActionCard('send_command_rm3mini');
-		this.rm3mini_action_send_cmd
-			.registerRunListener(this.do_exec_cmd.bind(this))
-			.getArgument('variable')
-			.registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); });
-
-		// Register a function to fill the trigger-flowcard 'RC_specific_sent' (see app.json)
-		this.rm3mini_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard('RC_specific_sent_rm3mini');
-		this.rm3mini_specific_cmd_trigger
-			.registerRunListener(this.check_condition_specific_cmd.bind(this))
-			.getArgument('variable')
-			.registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); })
-
-		this.rm3mini_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard('RC_sent_any_rm3mini');
-	}
-
+  do_exec_cmd(args, state) {
+    return args.device.executeCommand(args);
+  }
 }
 
 module.exports = BroadlinkRM3miniDriver;

@@ -16,83 +16,68 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const Homey = require('homey');
-const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-const BroadlinkUtils = require('./../../lib/BroadlinkUtils.js');
-
+const Homey = require("homey");
+const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
+const BroadlinkUtils = require("./../../lib/BroadlinkUtils.js");
 
 class BroadlinkSP2Driver extends BroadlinkDriver {
+  check_condition_power_on(args, state) {
+    return args.device.check_condition_power_on();
+  }
 
+  check_condition_nightlight_on(args, state) {
+    return args.device.check_condition_nightlight_on();
+  }
 
-	check_condition_power_on(args, state) {
-		return args.device.check_condition_power_on()
-	}
+  do_action_power_on(args, state) {
+    return args.device.do_action_power_on();
+  }
 
-	check_condition_nightlight_on(args, state) {
-		return args.device.check_condition_nightlight_on()
-	}
+  do_action_power_off(args, state) {
+    return args.device.do_action_power_off();
+  }
 
-	do_action_power_on(args, state) {
-		return args.device.do_action_power_on()
-	}
+  do_action_nightlight_on(args, state) {
+    return args.device.do_action_nightlight_on();
+  }
 
-	do_action_power_off(args, state) {
-		return args.device.do_action_power_off()
-	}
+  do_action_nightlight_off(args, state) {
+    return args.device.do_action_nightlight_off();
+  }
 
-	do_action_nightlight_on(args, state) {
-		return args.device.do_action_nightlight_on()
-	}
+  async onInit() {
+    super.onInit({
+      CompatibilityID: 0x2711 // SP2
+    });
 
-	do_action_nightlight_off(args, state) {
-		return args.device.do_action_nightlight_off()
-	}
+    this.trigger_power_toggle = this.homey.flow.getDeviceTriggerCard("sp2_onoff_power");
+    this.trigger_power_on = this.homey.flow.getDeviceTriggerCard("sp2_onoff_power_on");
+    this.trigger_power_off = this.homey.flow.getDeviceTriggerCard("sp2_onoff_power_off");
 
-	async onInit() {
-		super.onInit({
-			CompatibilityID: 0x2711   // SP2
-		});
+    this.trigger_nightlight_toggle = this.homey.flow.getDeviceTriggerCard("sp2_onoff_nightlight");
+    this.trigger_nightlight_on = this.homey.flow.getDeviceTriggerCard("sp2_onoff_nightlight_on");
+    this.trigger_nightlight_off = this.homey.flow.getDeviceTriggerCard("sp2_onoff_nightlight_off");
 
-		this.trigger_power_toggle = this.homey.flow.getDeviceTriggerCard('sp2_onoff_power');
-		this.trigger_power_on = this.homey.flow.getDeviceTriggerCard('sp2_onoff_power_on');
-		this.trigger_power_off = this.homey.flow.getDeviceTriggerCard('sp2_onoff_power_off');
+    this.condition_power_on = this.homey.flow.getConditionCard("sp2_onoff_power_on");
+    this.condition_power_on.registerRunListener(this.check_condition_power_on.bind(this));
 
-		this.trigger_nightlight_toggle = this.homey.flow.getDeviceTriggerCard('sp2_onoff_nightlight');
-		this.trigger_nightlight_on = this.homey.flow.getDeviceTriggerCard('sp2_onoff_nightlight_on');
-		this.trigger_nightlight_off = this.homey.flow.getDeviceTriggerCard('sp2_onoff_nightlight_off');
+    this.condition_nightlight_on = this.homey.flow.getConditionCard("sp2_onoff_nightlight_on");
+    this.condition_nightlight_on.registerRunListener(this.check_condition_nightlight_on.bind(this));
 
-		this.condition_power_on = this.homey.flow.getConditionCard('sp2_onoff_power_on');
-		this.condition_power_on
+    this.action_power_on = this.homey.flow.getActionCard("sp2_onoff_power_on");
+    this.action_power_on.registerRunListener(this.do_action_power_on.bind(this));
 
-			.registerRunListener(this.check_condition_power_on.bind(this))
+    this.action_power_off = this.homey.flow.getActionCard("sp2_onoff_power_off");
+    this.action_power_off.registerRunListener(this.do_action_power_off.bind(this));
 
-		this.condition_nightlight_on = this.homey.flow.getConditionCard('sp2_onoff_nightlight_on');
-		this.condition_nightlight_on
+    this.action_nightlight_on = this.homey.flow.getActionCard("sp2_onoff_nightlight_on");
+    this.action_nightlight_on.registerRunListener(this.do_action_nightlight_on.bind(this));
 
-			.registerRunListener(this.check_condition_nightlight_on.bind(this))
-
-		this.action_power_on = this.homey.flow.getActionCard('sp2_onoff_power_on');
-		this.action_power_on
-
-			.registerRunListener(this.do_action_power_on.bind(this))
-
-		this.action_power_off = this.homey.flow.getActionCard('sp2_onoff_power_off');
-		this.action_power_off
-
-			.registerRunListener(this.do_action_power_off.bind(this))
-
-		this.action_nightlight_on = this.homey.flow.getActionCard('sp2_onoff_nightlight_on');
-		this.action_nightlight_on
-
-			.registerRunListener(this.do_action_nightlight_on.bind(this))
-
-		this.action_nightlight_off = this.homey.flow.getActionCard('sp2_onoff_nightlight_off');
-		this.action_nightlight_off
-
-			.registerRunListener(this.do_action_nightlight_off.bind(this))
-	}
+    this.action_nightlight_off = this.homey.flow.getActionCard("sp2_onoff_nightlight_off");
+    this.action_nightlight_off.registerRunListener(this.do_action_nightlight_off.bind(this));
+  }
 }
 
 module.exports = BroadlinkSP2Driver;

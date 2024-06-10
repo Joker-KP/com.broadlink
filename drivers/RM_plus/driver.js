@@ -16,16 +16,16 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 const BroadlinkRM3miniDriver = require("./../RM3_mini/driver");
 
 class BroadlinkRMPlusDriver extends BroadlinkRM3miniDriver {
-
   async onInit() {
-    await super.onInit();
-    this.setCompatibilityID(0x272a); // RM Pro Plus 2
-	
+    await super.onInit({
+      CompatibilityID: 0x272a // RM Pro Plus 2
+    });
+
     // Initialize and register flow card action for sending command specific to RM Plus
     this.rmplus_action_send_cmd = this.homey.flow.getActionCard("send_command_rmplus");
     this.rmplus_action_send_cmd

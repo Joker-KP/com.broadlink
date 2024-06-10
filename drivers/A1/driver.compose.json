@@ -20,33 +20,6 @@
 		"a1_light_level_number",
 		"a1_noise_level_number"
 	],
-	"mobile": {
-		"components": [
-			{
-				"id": "icon",
-				"capabilities": [
-					"updateSensor"
-				]
-			},
-			{
-				"id": "sensor",
-				"capabilities": [
-					"a1_air_quality",
-					"a1_noise_level",
-					"a1_light_level",
-					"measure_temperature",
-					"measure_humidity"
-				],
-				"options": {
-					"icons": {
-						"a1_air_quality": "/assets/airquality.svg",
-						"a1_noise_level": "/assets/noiselevel.svg",
-						"a1_light_level": "/assets/lightlevel.svg"
-					}
-				}
-			}
-		]
-	},
 	"pair": [
 		{
 			"$template": "start",
@@ -144,7 +117,7 @@
 				"titleFormatted": {
 					"en": "Air quality is [[variable]]",
 					"nl": "Luchtkwaliteit is [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -186,7 +159,7 @@
 				"titleFormatted": {
 					"en": "Air quality is worse than [[variable]]",
 					"nl": "Luchtkwaliteit is slechter dan [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -207,7 +180,7 @@
 				"titleFormatted": {
 					"en": "Light level is [[variable]]",
 					"nl": "Lichtniveau is [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -228,7 +201,7 @@
 				"titleFormatted": {
 					"en": "Light level is brighter than [[variable]]",
 					"nl": "Lichtniveau is helderder dan [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -249,7 +222,7 @@
 				"titleFormatted": {
 					"en": "Light level is darker than [[variable]]",
 					"nl": "Lichtniveau is donkerder dan [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -270,7 +243,7 @@
 				"titleFormatted": {
 					"en": "Noise level is [[variable]]",
 					"nl": "Geluidsniveau is [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -291,7 +264,7 @@
 				"titleFormatted": {
 					"en": "Noise level is louder than [[variable]]",
 					"nl": "Geluidsniveau is luider dan [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",
@@ -306,13 +279,13 @@
 			{
 				"id": "a1_noise_level_softer",
 				"title": {
-					"en": "Noise Level is !{{softer|not softer} than",
+					"en": "Noise Level is !{{softer|not softer}} than",
 					"nl": "Geluidsniveau is !{{zachter|niet zachter}} dan"
 				},
 				"titleFormatted": {
 					"en": "Noise level is softer than [[variable]]",
 					"nl": "Geluidsniveau is zachter dan [[variable]]"
-				  },
+				},
 				"args": [
 					{
 						"name": "variable",

@@ -34,8 +34,9 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
 
 	async onInit() {
-		super.onInit();
-		this.setCompatibilityID(0x51DA)   // RM4 mini
+		super.onInit({
+			CompatibilityID: 0x51DA   // RM4 Mini
+		});
 
 		//this.rm4_action_send_cmd = new Homey.FlowCardAction('send_command');
 		this.rm4_mini_action_send_cmd = this.homey.flow

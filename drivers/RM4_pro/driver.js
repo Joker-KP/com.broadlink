@@ -16,46 +16,46 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const BroadlinkDriver = require('../../lib/BroadlinkDriver');
-
+const BroadlinkDriver = require("../../lib/BroadlinkDriver");
 
 class BroadlinkRM4ProDriver extends BroadlinkDriver {
-	async onInit() {
-		super.onInit();
-		this.setCompatibilityID(0x520B);  // RM4 PRO
+  async onInit() {
+    super.onInit({
+      CompatibilityID: 0x520b // RM4 PRO
+    });
 
-		//this.rm4_action_send_cmd = new Homey.FlowCardAction('send_command');
-		this.rm4_pro_action_send_cmd = this.homey.flow
-			.getActionCard("send_command_rm4_pro");
-		this.rm4_pro_action_send_cmd
-			.registerRunListener(this.do_exec_cmd.bind(this))
-			.getArgument('variable')
-			.registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); });
+    //this.rm4_action_send_cmd = new Homey.FlowCardAction('send_command');
+    this.rm4_pro_action_send_cmd = this.homey.flow.getActionCard("send_command_rm4_pro");
+    this.rm4_pro_action_send_cmd
+      .registerRunListener(this.do_exec_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
 
-		// Register a function to fill the trigger-flowcard 'RC_specific_sent' (see app.json)
-		//this.rm4_specific_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_specific_sent');
-		this.rm4_pro_specific_cmd_trigger = this.homey.flow
-			.getDeviceTriggerCard("RC_specific_sent_rm4_pro");
-		this.rm4_pro_specific_cmd_trigger
-			.registerRunListener(this.check_condition_specific_cmd.bind(this))
-			.getArgument('variable')
-			.registerAutocompleteListener((query, args) => { return args.device.onAutoComplete(); })
+    // Register a function to fill the trigger-flowcard 'RC_specific_sent' (see app.json)
+    //this.rm4_specific_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_specific_sent');
+    this.rm4_pro_specific_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_specific_sent_rm4_pro");
+    this.rm4_pro_specific_cmd_trigger
+      .registerRunListener(this.check_condition_specific_cmd.bind(this))
+      .getArgument("variable")
+      .registerAutocompleteListener((query, args) => {
+        return args.device.onAutoComplete();
+      });
 
-		//this.rm3mini_any_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_sent_any').register()
-		this.rm4_pro_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rm4_pro");
-	}
+    //this.rm3mini_any_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_sent_any').register()
+    this.rm4_pro_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rm4_pro");
+  }
 
-	check_condition_specific_cmd(args, state) {
-		return args.device.check_condition_specific_cmd_sent(args, state)
-	}
+  check_condition_specific_cmd(args, state) {
+    return args.device.check_condition_specific_cmd_sent(args, state);
+  }
 
-	do_exec_cmd(args, state) {
-		return args.device.executeCommand(args);
-	}
-
-
+  do_exec_cmd(args, state) {
+    return args.device.executeCommand(args);
+  }
 }
 
 module.exports = BroadlinkRM4ProDriver;

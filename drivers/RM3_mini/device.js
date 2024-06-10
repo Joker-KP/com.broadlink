@@ -100,7 +100,8 @@ class RM3miniDevice extends BroadlinkDevice {
       let cmdData = this.dataStore.getCommandData(cmd.name);
 
       const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
-      if (deviceType == 0x5F36) { // 0x5F36 for Red Bean
+      if (deviceType == 0x5f36) {
+        // 0x5F36 for Red Bean
         await this._communicate.send_IR_RF_data_red(cmdData);
       } else {
         await this._communicate.send_IR_RF_data(cmdData);
@@ -204,7 +205,8 @@ class RM3miniDevice extends BroadlinkDevice {
         const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
         this._utils.debugLog(this, `Device type: ${deviceType}`);
 
-        if (deviceType == 0x5F36) { // 0x5F36 for Red Bean
+        if (deviceType == 0x5f36) {
+          // 0x5F36 for Red Bean
 
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
           await this._communicate.enter_learning_red();
@@ -214,8 +216,9 @@ class RM3miniDevice extends BroadlinkDevice {
         }
 
         let data;
-        // useless check - seems that check_IR_data does have already modification for 0x5F36 
-        if (deviceType == 0x5F36) { // 0x5F36 for Red Bean
+        // useless check - seems that check_IR_data does have already modification for 0x5F36
+        if (deviceType == 0x5f36) {
+          // 0x5F36 for Red Bean
           data = await this._communicate.check_IR_data_red();
         } else {
           data = await this._communicate.check_IR_data();
@@ -306,6 +309,17 @@ class RM3miniDevice extends BroadlinkDevice {
 
       if (key === "Authenticate" && newName === true) {
         this._utils.debugLog(this, "Re-authenticating device due to settings change");
+        let deviceData = this.getData();
+        let options = {
+          ipAddress: this.getSettings().ipAddress,
+          mac: this._utils.hexToArr(deviceData.mac),
+          count: Math.floor(Math.random() * 0xffff),
+          id: null,
+          key: null,
+          homey: this.homey,
+          deviceType: parseInt(deviceData.devtype, 16),
+        };
+        this._communicate.configure(options);
         await this.authenticateDevice();
 
         // Defer resetting the Authenticate setting
