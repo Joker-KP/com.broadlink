@@ -51,7 +51,7 @@ class SP2Device extends BroadlinkDevice {
     try {
       // this._utils.debugLog(this, "onCheckInterval called");
       let energy = await this.get_energy();
-      this._utils.debugLog(this, `Energy reading: ${energy}`);
+      this._utils.debugLog(this, `Energy reading from interval: ${energy} W.`);
       this.setCapabilityValue("measure_power", energy);
 
       let response = await this._communicate.read_status();
@@ -74,7 +74,7 @@ class SP2Device extends BroadlinkDevice {
       let response = await this._communicate.sp2_get_energy();
 
       // Log the raw response for later analysis
-      this._utils.debugLog(this, `Raw response: ${response}`);
+      //this._utils.debugLog(this, `Raw response: ${response}`);
 
       // Extract the 2nd and 3rd bytes and convert to hexadecimal strings
       let secondHex = response[1].toString(16).padStart(2, "0");
