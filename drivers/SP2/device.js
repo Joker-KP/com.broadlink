@@ -49,9 +49,9 @@ class SP2Device extends BroadlinkDevice {
 
   async onCheckInterval() {
     try {
-      this._utils.debugLog(this, "onCheckInterval called");
+      // this._utils.debugLog(this, "onCheckInterval called");
       let energy = await this.get_energy();
-      this._utils.debugLog(this, `Energy reading: ${energy}`);
+      this._utils.debugLog(this, `Energy reading from interval: ${energy} W.`);
       this.setCapabilityValue("measure_power", energy);
 
       let response = await this._communicate.read_status();
@@ -70,24 +70,27 @@ class SP2Device extends BroadlinkDevice {
 
   async get_energy() {
     try {
-      this._utils.debugLog(this, "get_energy called");
+      // this._utils.debugLog(this, "get_energy called");
       let response = await this._communicate.sp2_get_energy();
 
       // Log the raw response for later analysis
-      this._utils.debugLog(this, `Raw response: ${response}`);
+      //this._utils.debugLog(this, `Raw response: ${response}`);
 
-      // Extract the bytes 0x7, 0x6, and 0x5 and convert them to a hex string in reverse order
-      let energyHex = [
-        response[7].toString(16).padStart(2, "0"),
-        response[6].toString(16).padStart(2, "0"),
-        response[5].toString(16).padStart(2, "0"),
-      ].join("");
+      // Extract the 2nd and 3rd bytes and convert to hexadecimal strings
+      let secondHex = response[1].toString(16).padStart(2, "0");
+      let thirdHex = response[2].toString(16).padStart(2, "0");
 
-      // Convert hex string to integer and divide by 100
-      let energy = parseInt(energyHex, 16) / 100.0;
+      //this._utils.debugLog(this, `Hex values: secondHex = ${secondHex}, thirdHex = ${thirdHex}`);
 
-      // Log the calculated energy value
-      this._utils.debugLog(this, `Calculated energy: ${energy}`);
+      // Combine the hex values correctly as strings
+      let energyStr = `${thirdHex}.${secondHex}`;
+
+      //this._utils.debugLog(this, `Combined energy string: ${energyStr}`);
+
+      // Convert the combined string to float
+      let energy = parseFloat(energyStr);
+
+      this._utils.debugLog(this, `Calculated energy: ${energy}W`);
 
       return energy;
     } catch (e) {
@@ -189,12 +192,18 @@ class SP2Device extends BroadlinkDevice {
   do_action_power_on() {
     this.set_power(true);
     this.setCapabilityValue("onoff.power", true);
+    let energy = this.get_energy();
+    this._utils.debugLog(this, `Energy reading: ${energy}`);
+    this.setCapabilityValue("measure_power", energy);
     return Promise.resolve(true);
   }
 
   do_action_power_off() {
     this.set_power(false);
     this.setCapabilityValue("onoff.power", false);
+    let energy = this.get_energy();
+    this._utils.debugLog(this, `Energy reading: ${energy}`);
+    this.setCapabilityValue("measure_power", energy);
     return Promise.resolve(true);
   }
 
