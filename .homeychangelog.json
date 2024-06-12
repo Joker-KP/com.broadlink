@@ -76,5 +76,8 @@
   },
   "3.1.26": {
     "en": "Finally fixed SP2 + SP3S power readings + logging optimisation"
+  },
+  "3.1.27": {
+    "en": "SP2/SP3s power monitoring fixes for higher loads"
   }
 }
