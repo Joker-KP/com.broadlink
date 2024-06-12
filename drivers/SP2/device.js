@@ -76,21 +76,26 @@ class SP2Device extends BroadlinkDevice {
       // Log the raw response for later analysis
       //this._utils.debugLog(this, `Raw response: ${response}`);
 
-      // Extract the 2nd and 3rd bytes and convert to hexadecimal strings
+      // Extract the 2nd, 3rd, 4th, and 5th bytes and convert to hexadecimal strings
       let secondHex = response[1].toString(16).padStart(2, "0");
       let thirdHex = response[2].toString(16).padStart(2, "0");
+      let fourthHex = response[3].toString(16).padStart(2, "0");
+      let fifthHex = response[4].toString(16).padStart(2, "0");
 
-      //this._utils.debugLog(this, `Hex values: secondHex = ${secondHex}, thirdHex = ${thirdHex}`);
+      /*this._utils.debugLog(
+        this,
+        `Hex values: secondHex = ${secondHex}, thirdHex = ${thirdHex}, fourthHex = ${fourthHex}, fifthHex = ${fifthHex}`
+      );*/
 
       // Combine the hex values correctly as strings
-      let energyStr = `${thirdHex}.${secondHex}`;
+      let energyStr = `${fifthHex}${fourthHex}${thirdHex}.${secondHex}`;
 
-      //this._utils.debugLog(this, `Combined energy string: ${energyStr}`);
+      this._utils.debugLog(this, `Combined energy string: ${energyStr}`);
 
       // Convert the combined string to float
       let energy = parseFloat(energyStr);
 
-      this._utils.debugLog(this, `Calculated energy: ${energy}W`);
+      //this._utils.debugLog(this, `Calculated energy: ${energy}W`);
 
       return energy;
     } catch (e) {
