@@ -73,5 +73,8 @@
   },
   "3.1.25": {
     "en": "Icons adjustments"
+  },
+  "3.1.26": {
+    "en": "Finally fixed SP2 + SP3S power readings + logging optimisation"
   }
 }
