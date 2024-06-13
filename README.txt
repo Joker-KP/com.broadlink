@@ -1,4 +1,4 @@
-Use Homey together with Broadlink devices
+Enhance your living space: Effortlessly connect Broadlink devices with Homey for smarter automation.
 
 
 In the application settings, there are flag to enable logging : 
