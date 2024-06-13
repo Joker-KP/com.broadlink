@@ -23,6 +23,11 @@ const BroadlinkUtils = require("./../../lib/BroadlinkUtils.js");
 const BroadlinkDevice = require("./../../lib/BroadlinkDevice");
 
 class SP2Device extends BroadlinkDevice {
+  constructor() {
+    super();
+    this._lastValidEnergy = 0; // Initialize the last known valid energy value
+  }
+
   generate_trigger_nightlight(mode) {
     if (mode != this.getCapabilityValue("onoff.nightlight")) {
       let drv = this.driver;
@@ -90,17 +95,25 @@ class SP2Device extends BroadlinkDevice {
       // Combine the hex values correctly as strings
       let energyStr = `${fifthHex}${fourthHex}${thirdHex}.${secondHex}`;
 
+      
       this._utils.debugLog(this, `Combined energy string: ${energyStr}`);
 
       // Convert the combined string to float
       let energy = parseFloat(energyStr);
 
       //this._utils.debugLog(this, `Calculated energy: ${energy}W`);
+      
+      // Ensure the returned energy is a valid number
+      if (isNaN(energy)) {
+        this.error("Calculated energy is not a valid number:", energy);
+        return this._lastValidEnergy; // Return the last known valid energy value
+      }
 
+      this._lastValidEnergy = energy; // Update the last known valid energy value
       return energy;
     } catch (e) {
       this.error("Error in get_energy", e);
-      return 0;
+      return this._lastValidEnergy; // Return the last known valid energy value in case of error
     }
   }
 
