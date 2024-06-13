@@ -79,5 +79,8 @@
   },
   "3.1.27": {
     "en": "SP2/SP3s power monitoring fixes for higher loads"
+  },
+  "3.1.28": {
+    "en": "Improvements in the get_energy method"
   }
 }
