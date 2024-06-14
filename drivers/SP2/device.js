@@ -23,11 +23,6 @@ const BroadlinkUtils = require("./../../lib/BroadlinkUtils.js");
 const BroadlinkDevice = require("./../../lib/BroadlinkDevice");
 
 class SP2Device extends BroadlinkDevice {
-  constructor() {
-    super();
-    this._lastValidEnergy = 0; // Initialize the last known valid energy value
-  }
-
   generate_trigger_nightlight(mode) {
     if (mode != this.getCapabilityValue("onoff.nightlight")) {
       let drv = this.driver;
@@ -74,48 +69,50 @@ class SP2Device extends BroadlinkDevice {
   }
 
   async get_energy() {
+    let _lastValidEnergy; 
+  
     try {
       // this._utils.debugLog(this, "get_energy called");
       let response = await this._communicate.sp2_get_energy();
-
+  
       // Log the raw response for later analysis
       //this._utils.debugLog(this, `Raw response: ${response}`);
-
+  
       // Extract the 2nd, 3rd, 4th, and 5th bytes and convert to hexadecimal strings
       let secondHex = response[1].toString(16).padStart(2, "0");
       let thirdHex = response[2].toString(16).padStart(2, "0");
       let fourthHex = response[3].toString(16).padStart(2, "0");
       let fifthHex = response[4].toString(16).padStart(2, "0");
-
+  
       /*this._utils.debugLog(
         this,
         `Hex values: secondHex = ${secondHex}, thirdHex = ${thirdHex}, fourthHex = ${fourthHex}, fifthHex = ${fifthHex}`
       );*/
-
+  
       // Combine the hex values correctly as strings
       let energyStr = `${fifthHex}${fourthHex}${thirdHex}.${secondHex}`;
-
-      
+  
       this._utils.debugLog(this, `Combined energy string: ${energyStr}`);
-
+  
       // Convert the combined string to float
       let energy = parseFloat(energyStr);
-
+  
       //this._utils.debugLog(this, `Calculated energy: ${energy}W`);
-      
+        
       // Ensure the returned energy is a valid number
       if (isNaN(energy)) {
         this.error("Calculated energy is not a valid number:", energy);
-        return this._lastValidEnergy; // Return the last known valid energy value
+        return _lastValidEnergy; // Return the last known valid energy value
       }
-
-      this._lastValidEnergy = energy; // Update the last known valid energy value
+  
+      _lastValidEnergy = energy; // Update the last known valid energy value
       return energy;
     } catch (e) {
       this.error("Error in get_energy", e);
-      return this._lastValidEnergy; // Return the last known valid energy value in case of error
+      return _lastValidEnergy !== undefined ? _lastValidEnergy : null; // Return the last known valid energy value or null if never set
     }
   }
+  
 
   /**
    * Returns the night light state of the smart plug.
@@ -249,6 +246,7 @@ class SP2Device extends BroadlinkDevice {
 
   async onInit() {
     await super.onInit();
+
     this._utils.debugLog(this, "SP2/SP3 Device onInit called");
 
     this.registerCapabilityListener("onoff.power", this.onCapabilityPowerOnOff.bind(this));
