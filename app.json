@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.broadlink",
-  "version": "3.1.28",
+  "version": "3.1.29",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "name": {
@@ -4032,7 +4032,9 @@
       "class": "other",
       "capabilities": [
         "learnIRcmd",
-        "learningState"
+        "learningState",
+        "learnRFcmd",
+        "learningStateRF"
       ],
       "pair": [
         {
@@ -5536,6 +5538,26 @@
       "insights": true
     },
     "learningState": {
+      "type": "boolean",
+      "title": {
+        "en": "Learning State",
+        "nl": "Leerstatus"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "insightsTitleTrue": {
+        "en": "Learning mode is active",
+        "nl": "Leer modus is actief"
+      },
+      "insightsTitleFalse": {
+        "en": "Learning mode is inactive",
+        "nl": "Leer modus is inactief"
+      },
+      "icon": "/assets/learningState.svg"
+    },
+    "learningStateRF": {
       "type": "boolean",
       "title": {
         "en": "Learning State",

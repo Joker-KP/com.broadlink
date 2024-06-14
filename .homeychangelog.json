@@ -82,5 +82,8 @@
   },
   "3.1.28": {
     "en": "Improvements in the get_energy method"
+  },
+  "3.1.29": {
+    "en": "Another fix for SP2 / SP3s devices"
   }
 }
