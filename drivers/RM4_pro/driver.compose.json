@@ -11,7 +11,9 @@
   "class": "other",
   "capabilities": [
     "learnIRcmd",
-    "learningState"
+    "learningState",
+    "learnRFcmd",
+    "learningStateRF"
   ],
   "pair": [
     {

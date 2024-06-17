@@ -1,0 +1,20 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Learning State",
+    "nl": "Leerstatus"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "uiComponent": "sensor",
+  "insightsTitleTrue": {
+    "en": "Learning mode is active",
+    "nl": "Leer modus is actief"
+  },
+  "insightsTitleFalse": {
+    "en": "Learning mode is inactive",
+    "nl": "Leer modus is inactief"
+  },
+  "icon": "/assets/learningState.svg"
+}

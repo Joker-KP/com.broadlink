@@ -98,7 +98,7 @@ class RM4ProDevice extends BroadlinkDevice {
 
       // send the command
       let cmdData = this.dataStore.getCommandData(cmd.name);
-      await this._communicate.send_IR_RF_data_red(cmdData);
+      await this._communicate.send_IR_RF_data_rm4pro(cmdData);
       cmdData = null;
 
       let drv = this.driver;
@@ -107,7 +107,9 @@ class RM4ProDevice extends BroadlinkDevice {
 
       // RC_sent_any: set token
       drv.rm4_pro_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
-    } catch (e) {}
+    } catch (e) {
+      this._utils.debugLog(this, `Error during command execution: ${e}`);
+    }
 
     return Promise.resolve(true);
   }
@@ -140,10 +142,16 @@ class RM4ProDevice extends BroadlinkDevice {
     await super.onInit();
     this._utils.debugLog(this, "RM4 Pro Device onInit called");
     // Ensure the learnIRcmd capability exists and set its initial value
-    if (!this.hasCapability("learnIRcmd")) {
-      await this.addCapability("learnIRcmd");
+    if (!this.hasCapability("learnRFcmd")) {
+      await this.addCapability("learnRFcmd");
     }
-    this.setCapabilityValue("learnIRcmd", false).catch(this.error);
+    this.setCapabilityValue("learnRFcmd", false).catch(this.error);
+
+        // Ensure the learnIRcmd capability exists and set its initial value
+        if (!this.hasCapability("learnIRcmd")) {
+          await this.addCapability("learnIRcmd");
+        }
+        this.setCapabilityValue("learnIRcmd", false).catch(this.error);
 
     // Ensure the learningState capability exists and set its initial value
     if (!this.hasCapability("learningState")) {
@@ -151,7 +159,14 @@ class RM4ProDevice extends BroadlinkDevice {
     }
     this.setCapabilityValue("learningState", false).catch(this.error);
 
+    // Ensure the learningState capability exists and set its initial value
+    if (!this.hasCapability("learningStateRF")) {
+      await this.addCapability("learningStateRF");
+    }
+    this.setCapabilityValue("learningStateRF", false).catch(this.error);
+
     this.registerCapabilityListener("learnIRcmd", this.onCapabilityLearnIR.bind(this));
+    this.registerCapabilityListener("learnRFcmd", this.onCapabilityLearnRF.bind(this));
 
     this.dataStore = new DataStore(this.getData().mac);
     await this.dataStore.readCommands(async () => {
@@ -313,6 +328,101 @@ class RM4ProDevice extends BroadlinkDevice {
   this._utils.debugLog(this, "Settings successfully updated.");
 }
 
+async stopRfLearning() {
+  try {
+    await this._communicate.cancelRFSweep_rm4pro();
+  } catch (e) {
+    this._utils.debugLog(this, "**> stopRfLearning error : " + e);
+  }
+  this.setCapabilityValue("learningStateRF", false).catch(this.error);
+  this.learn = false;
+}
+
+async onCapabilityLearnRF(onoff) {
+  if (this.learn) {
+    // !!!!!!!!!!!!!!!!!!!!!!! check this later !!!!!!!
+    return true;
+  }
+  this.learn = true;
+
+  this.setCapabilityValue("learningStateRF", true).catch(this.error);
+
+  let type = this.getData().devtype;
+  try {
+    var data;
+    //temporary !!!!! remove after right settings ! (polling)
+    await this._communicate.checkTemperature_rm4pro();
+    await this._communicate.checkHumidity_rm4pro();
+    await this._communicate.enterRFSweep_rm4pro();
+
+    if (this.isSpeechOutputAvailable()) {
+      await this.homey.speechOutput.say(this.homey.__("rf_learn.long_press"));
+    } else {
+      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
+    }
+
+    await this._communicate.checkRFData_rm4pro();
+
+    if (this.isSpeechOutputAvailable()) {
+      await this.homey.speechOutput.say(this.homey.__("rf_learn.multi_presses"));
+    } else {
+      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.multi_presses")));
+    }
+
+    if (type == 0x279d || type == 0x27a9) {
+      await this._communicate.enter_learning();
+      data = await this._communicate.check_IR_data();
+    } else {
+      data = await this._communicate.checkRFData2_rm4pro();
+    }
+    if (data) {
+      let idx = this.dataStore.dataArray.length + 1;
+      let cmdname = "rf-cmd" + idx;
+      this.dataStore.addCommand(cmdname, data);
+      await this.storeCmdSetting(cmdname);
+    }
+    await this.stopRfLearning();
+
+    if (this.isSpeechOutputAvailable()) {
+      await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
+    } else {
+      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+    }
+
+    return true;
+  } catch (e) {
+    this._utils.debugLog(this, "**> Learning RF failed :",e);
+
+    if (this.isSpeechOutputAvailable()) {
+      await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
+    } else {
+      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+    }
+
+    await this.stopRfLearning();
+    return false;
+  }
+}
+
+/**
+   * Checks if speech output is available on the current platform
+   * @returns {boolean}
+   */
+isSpeechOutputAvailable() {
+  const platform = this.homey.platform;
+  const platformVersion = this.homey.platformVersion;
+
+  // Log the platform and platform version
+  this._utils.debugLog(this, `isSpeechOutputAvailable: platform=${platform}, platformVersion=${platformVersion}`);
+
+  // Speech output is available only if the platform is "local" or undefined and the platform version is exactly 1
+  if ((platform === "local" || platform === undefined) && platformVersion === 1) {
+    return true;
+  }
+
+  // Otherwise, speech output is not available
+  return false;
+}
 
   /**
    * This method will be called when a device has been removed.
