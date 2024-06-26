@@ -54,8 +54,9 @@
     "noisy": "noisy"
   },
   "rf_learn": {
-    "long_press": "keep button pressed",
-    "multi_presses": "press button repeatedly",
-    "done": "stop pressing button"
+    "long_press": "Keep remote button pressed until LED turns off",
+    "multi_presses": "Now keep press button repeatedly and shortly until LED turns off",
+    "done": "RF signal stored",
+    "error": "RF signal learning failed"
   }
 }

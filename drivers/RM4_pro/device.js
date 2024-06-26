@@ -199,14 +199,13 @@ class RM4ProDevice extends BroadlinkDevice {
 
     // Register polling for temperature and humidity
 
-    // !!! change polling back to 60000 !!!
-    this.pollInterval = setInterval(this.pollTempHumidity.bind(this), 600000); // Poll every 60 seconds
+    this.pollInterval = setInterval(this.pollTempHumidity.bind(this), 60000); // Poll every 60 seconds
 
     if (!this.getSetting("key")) {
       this._utils.debugLog(this, `>> Key not known, launching autentification during OnInit <<`);
       await this.authenticateDevice();
     }
-    
+
     await this.pollTempHumidity(); // Initial poll
   }
 
@@ -386,8 +385,7 @@ class RM4ProDevice extends BroadlinkDevice {
         if (this.isSpeechOutputAvailable()) {
           await this.homey.speechOutput.say(this.homey.__("rf_learn.long_press"));
         } else {
-          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
-          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
+          setTimeout(() => this.setWarning(null), 6000, await this.setWarning(this.homey.__("rf_learn.long_press")));
         }
 
         const frequencyBytes = await this._communicate.checkRFData_rm4pro();
@@ -430,7 +428,7 @@ class RM4ProDevice extends BroadlinkDevice {
         if (this.isSpeechOutputAvailable()) {
           await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
         } else {
-          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.error")));
         }
 
         await this.stopRfLearning();
@@ -449,7 +447,7 @@ class RM4ProDevice extends BroadlinkDevice {
     const platformVersion = this.homey.platformVersion;
 
     // Log the platform and platform version
-    this._utils.debugLog(this, `isSpeechOutputAvailable: platform=${platform}, platformVersion=${platformVersion}`);
+    this._utils.debugLog(this, `SpeechOutput: platform=${platform}, platformVersion=${platformVersion}`);
 
     // Speech output is available only if the platform is "local" or undefined and the platform version is exactly 1
     if ((platform === "local" || platform === undefined) && platformVersion === 1) {

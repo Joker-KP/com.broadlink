@@ -54,8 +54,9 @@
     "noisy": "luidruchtig"
   },
   "rf_learn": {
-    "long_press": "houd knop ingedrukt",
-    "multi_presses": "druk kort en vaak op knop",
-    "done": "stop met knop indrukken"
+    "long_press": "Houd de knop van de afstandsbediening ingedrukt totdat het LED-lampje uitgaat",
+    "multi_presses": "Druk nu herhaaldelijk en kort op de knop totdat het LED-lampje uitgaat",
+    "done": "RF-signaal opgeslagen",
+    "error": "RF-signaal leren mislukt"
   }
 }
