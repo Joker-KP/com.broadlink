@@ -1,0 +1,12 @@
+{
+    "type": "number",
+    "units": "°C",
+    "title": {
+        "en": "Temperature",
+        "nl": "Temperatuur"
+    },
+    "getable": true,
+	"insights": true,
+  "icon": "/assets/temperature.svg"
+
+}

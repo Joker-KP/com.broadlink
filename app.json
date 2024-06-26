@@ -4034,7 +4034,9 @@
         "learnIRcmd",
         "learningState",
         "learnRFcmd",
-        "learningStateRF"
+        "learningStateRF",
+        "measure_humidity_rm4",
+        "measure_temperature_rm4"
       ],
       "pair": [
         {
@@ -5540,8 +5542,8 @@
     "learningState": {
       "type": "boolean",
       "title": {
-        "en": "Learning State",
-        "nl": "Leerstatus"
+        "en": "Learning IR",
+        "nl": "Leerstatus IS"
       },
       "getable": true,
       "setable": false,
@@ -5555,13 +5557,13 @@
         "en": "Learning mode is inactive",
         "nl": "Leer modus is inactief"
       },
-      "icon": "/assets/learningState.svg"
+      "icon": "/assets/infrared.svg"
     },
     "learningStateRF": {
       "type": "boolean",
       "title": {
-        "en": "Learning State",
-        "nl": "Leerstatus"
+        "en": "Learning RF",
+        "nl": "Leerstatus RF"
       },
       "getable": true,
       "setable": false,
@@ -5575,7 +5577,7 @@
         "en": "Learning mode is inactive",
         "nl": "Leer modus is inactief"
       },
-      "icon": "/assets/learningState.svg"
+      "icon": "/assets/rfsignal.svg"
     },
     "learnIRcmd": {
       "title": {
@@ -5597,11 +5599,11 @@
       }
     },
     "learnRFcmd": {
-      "type": "boolean",
       "title": {
         "en": "Learn RF command",
         "nl": "Leer RF commando"
       },
+      "type": "boolean",
       "getable": true,
       "setable": true,
       "insights": true,
@@ -5614,6 +5616,28 @@
         "en": "Learning mode deactivated",
         "nl": "Leer modus gedeactiveerd"
       }
+    },
+    "measure_humidity_rm4": {
+      "type": "number",
+      "units": "%",
+      "title": {
+        "en": "Humidity",
+        "nl": "Vochtigheid"
+      },
+      "getable": true,
+      "insights": true,
+      "icon": "/assets/humidity.svg"
+    },
+    "measure_temperature_rm4": {
+      "type": "number",
+      "units": "°C",
+      "title": {
+        "en": "Temperature",
+        "nl": "Temperatuur"
+      },
+      "getable": true,
+      "insights": true,
+      "icon": "/assets/temperature.svg"
     },
     "parental_mode": {
       "type": "boolean",

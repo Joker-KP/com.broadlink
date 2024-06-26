@@ -13,7 +13,9 @@
     "learnIRcmd",
     "learningState",
     "learnRFcmd",
-    "learningStateRF"
+    "learningStateRF",
+    "measure_humidity_rm4",
+    "measure_temperature_rm4"
   ],
   "pair": [
     {

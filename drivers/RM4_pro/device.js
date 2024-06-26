@@ -16,7 +16,7 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 const BroadlinkDevice = require("../../lib/BroadlinkDevice");
 const DataStore = require("./../../lib/DataStore.js");
@@ -145,25 +145,39 @@ class RM4ProDevice extends BroadlinkDevice {
     if (!this.hasCapability("learnRFcmd")) {
       await this.addCapability("learnRFcmd");
     }
-    this.setCapabilityValue("learnRFcmd", false).catch(this.error);
 
-        // Ensure the learnIRcmd capability exists and set its initial value
-        if (!this.hasCapability("learnIRcmd")) {
-          await this.addCapability("learnIRcmd");
-        }
-        this.setCapabilityValue("learnIRcmd", false).catch(this.error);
+    // Ensure the learnIRcmd capability exists and set its initial value
+    if (!this.hasCapability("learnIRcmd")) {
+      await this.addCapability("learnIRcmd");
+    }
+    this.setCapabilityValue("learnIRcmd", false).catch(this.error);
 
     // Ensure the learningState capability exists and set its initial value
     if (!this.hasCapability("learningState")) {
       await this.addCapability("learningState");
     }
-    this.setCapabilityValue("learningState", false).catch(this.error);
 
-    // Ensure the learningState capability exists and set its initial value
+    // Ensure the learningStateRF capability exists and set its initial value
     if (!this.hasCapability("learningStateRF")) {
       await this.addCapability("learningStateRF");
     }
-    this.setCapabilityValue("learningStateRF", false).catch(this.error);
+
+    // Ensure the humidity_rm4 capability exists and set its initial value
+    if (!this.hasCapability("measure_humidity_rm4")) {
+      await this.addCapability("measure_humidity_rm4");
+    }
+
+    // Ensure the temperature_rm4 capability exists and set its initial value
+    if (!this.hasCapability("measure_temperature_rm4")) {
+      await this.addCapability("measure_temperature_rm4");
+    }
+
+    // reset the state just in case of new init while app starting
+
+    await this.setCapabilityValue("learnIRcmd", false).catch(this.error);
+    await this.setCapabilityValue("learningState", false).catch(this.error);
+    await this.setCapabilityValue("learnRFcmd", false).catch(this.error);
+    await this.setCapabilityValue("learningStateRF", false).catch(this.error);
 
     this.registerCapabilityListener("learnIRcmd", this.onCapabilityLearnIR.bind(this));
     this.registerCapabilityListener("learnRFcmd", this.onCapabilityLearnRF.bind(this));
@@ -182,6 +196,18 @@ class RM4ProDevice extends BroadlinkDevice {
         this.start_check_interval(ci);
       }
     });
+
+    // Register polling for temperature and humidity
+
+    // !!! change polling back to 60000 !!!
+    this.pollInterval = setInterval(this.pollTempHumidity.bind(this), 600000); // Poll every 60 seconds
+
+    if (!this.getSetting("key")) {
+      this._utils.debugLog(this, `>> Key not known, launching autentification during OnInit <<`);
+      await this.authenticateDevice();
+    }
+    
+    await this.pollTempHumidity(); // Initial poll
   }
 
   /**
@@ -190,7 +216,7 @@ class RM4ProDevice extends BroadlinkDevice {
    */
   async onCapabilityLearnIR(onoff) {
     this._utils.debugLog(this, `onCapabilityLearnIR called with onoff: ${onoff}`);
-    
+
     if (this.learnTimeout) {
       clearTimeout(this.learnTimeout); // Clear any existing timeout
     }
@@ -252,7 +278,7 @@ class RM4ProDevice extends BroadlinkDevice {
     }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
 
- /**
+  /**
    * Called when the device settings are changed by the user
    * (so NOT called on programmatically changing settings)
    *
@@ -261,173 +287,200 @@ class RM4ProDevice extends BroadlinkDevice {
    *  @param changedKeysArr   contains an array of keys that have been changed
    *  @return {Promise<void>}
    */
- async onSettings({ oldSettings, newSettings, changedKeys }) {
-  this._utils.debugLog(this, "Settings changed:", changedKeys);
-  //this._utils.debugLog(this, 'Old settings:', oldSettings);
-  //this._utils.debugLog(this, 'New settings:', newSettings);
+  async onSettings({ oldSettings, newSettings, changedKeys }) {
+    this._utils.debugLog(this, "Settings changed:", changedKeys);
+    //this._utils.debugLog(this, 'Old settings:', oldSettings);
+    //this._utils.debugLog(this, 'New settings:', newSettings);
 
-  for (let i = 0; i < changedKeys.length; i++) {
-    const key = changedKeys[i];
-    const oldName = oldSettings[key] || "";
-    const newName = newSettings[key] || "";
+    for (let i = 0; i < changedKeys.length; i++) {
+      const key = changedKeys[i];
+      const oldName = oldSettings[key] || "";
+      const newName = newSettings[key] || "";
 
-    this._utils.debugLog(this, `Changed setting key: ${key}, Old value: ${oldName}, New value: ${newName}`);
+      this._utils.debugLog(this, `Changed setting key: ${key}, Old value: ${oldName}, New value: ${newName}`);
 
-    if (newName && newName.length > 0) {
-      if (oldName && oldName.length > 0) {
-        if (this.dataStore.findCommand(newName) >= 0) {
-          this._utils.debugLog(this, `Error: Command ${newName} already exists`);
-          throw new Error(this.homey.__("errors.save_settings_exist", { cmd: newName }));
-        }
-        // Rename the command if the old name exists and new name is provided
-        if (this.dataStore.renameCommand(oldName, newName)) {
-          this._utils.debugLog(this, `Command renamed from ${oldName} to ${newName}`);
+      if (newName && newName.length > 0) {
+        if (oldName && oldName.length > 0) {
+          if (this.dataStore.findCommand(newName) >= 0) {
+            this._utils.debugLog(this, `Error: Command ${newName} already exists`);
+            throw new Error(this.homey.__("errors.save_settings_exist", { cmd: newName }));
+          }
+          // Rename the command if the old name exists and new name is provided
+          if (this.dataStore.renameCommand(oldName, newName)) {
+            this._utils.debugLog(this, `Command renamed from ${oldName} to ${newName}`);
+          } else {
+            this._utils.debugLog(this, `Failed to rename command ${oldName} to ${newName}`);
+          }
         } else {
-          this._utils.debugLog(this, `Failed to rename command ${oldName} to ${newName}`);
+          this._utils.debugLog(this, `Error: No old command found for new command ${newName}`);
+          throw new Error(this.homey.__("errors.save_settings_nocmd", { cmd: newName }));
         }
       } else {
-        this._utils.debugLog(this, `Error: No old command found for new command ${newName}`);
-        throw new Error(this.homey.__("errors.save_settings_nocmd", { cmd: newName }));
+        if (oldName && oldName.length > 0) {
+          this.dataStore.deleteCommand(oldName);
+          this._utils.debugLog(this, `Command ${oldName} deleted.`);
+        }
       }
-    } else {
-      if (oldName && oldName.length > 0) {
-        this.dataStore.deleteCommand(oldName);
-        this._utils.debugLog(this, `Command ${oldName} deleted.`);
+
+      if (key === "ipAddress" && this._communicate) {
+        this._communicate.setIPaddress(newSettings.ipAddress);
+        this._utils.debugLog(this, `IP Address changed from ${oldSettings.ipAddress} to ${newSettings.ipAddress}`);
       }
-    }
 
-    if (key === "ipAddress" && this._communicate) {
-      this._communicate.setIPaddress(newSettings.ipAddress);
-      this._utils.debugLog(this, `IP Address changed from ${oldSettings.ipAddress} to ${newSettings.ipAddress}`);
-    }
+      if (key === "Authenticate" && newName === true) {
+        this._utils.debugLog(this, "Re-authenticating device due to settings change");
+        let deviceData = this.getData();
+        let options = {
+          ipAddress: this.getSettings().ipAddress,
+          mac: this._utils.hexToArr(deviceData.mac),
+          count: Math.floor(Math.random() * 0xffff),
+          id: null,
+          key: null,
+          homey: this.homey,
+          deviceType: parseInt(deviceData.devtype, 16),
+        };
+        this._communicate.configure(options);
+        await this.authenticateDevice();
 
-    if (key === "Authenticate" && newName === true) {
-      this._utils.debugLog(this, "Re-authenticating device due to settings change");
-      let deviceData = this.getData();
-      let options = {
-        ipAddress: this.getSettings().ipAddress,
-        mac: this._utils.hexToArr(deviceData.mac),
-        count: Math.floor(Math.random() * 0xffff),
-        id: null,
-        key: null,
-        homey: this.homey,
-        deviceType: parseInt(deviceData.devtype, 16),
-      };
-      this._communicate.configure(options);
-      await this.authenticateDevice();
-
-      // Defer resetting the Authenticate setting
-      process.nextTick(async () => {
-        await this.setSettings({ Authenticate: false }).catch((e) => {
-          this._utils.debugLog(this, "Error resetting Authenticate setting:", e.toString());
+        // Defer resetting the Authenticate setting
+        process.nextTick(async () => {
+          await this.setSettings({ Authenticate: false }).catch((e) => {
+            this._utils.debugLog(this, "Error resetting Authenticate setting:", e.toString());
+          });
         });
-      });
+      }
     }
+
+    this._utils.debugLog(this, "Settings successfully updated.");
   }
 
-  this._utils.debugLog(this, "Settings successfully updated.");
-}
+  async stopRfLearning() {
+    try {
+      await this._communicate.cancelRFSweep_rm4pro();
+    } catch (e) {
+      this._utils.debugLog(this, "**> stopRfLearning error : " + e);
+    }
 
-async stopRfLearning() {
-  try {
-    await this._communicate.cancelRFSweep_rm4pro();
-  } catch (e) {
-    this._utils.debugLog(this, "**> stopRfLearning error : " + e);
+    await this.setCapabilityValue("learnRFcmd", false).catch(this.error);
+    await this.setCapabilityValue("learningStateRF", false).catch(this.error);
+
+    this.learn = false;
   }
-  this.setCapabilityValue("learningStateRF", false).catch(this.error);
-  this.learn = false;
-}
 
-async onCapabilityLearnRF(onoff) {
-  if (this.learn) {
-    // !!!!!!!!!!!!!!!!!!!!!!! check this later !!!!!!!
+  async onCapabilityLearnRF(onoff) {
+    this._utils.debugLog(this, `onCapabilityLearnRF called with onoff: ${onoff}`);
+    if (this.learn) {
+      // Already learning, no need to restart
+      return true;
+    }
+    this.learn = true;
+    this.setCapabilityValue("learningStateRF", true).catch(this.error);
+
+    setImmediate(async () => {
+      let type = this.getData().devtype;
+      try {
+        var data;
+
+        await this._communicate.enterRFSweep_rm4pro();
+
+        if (this.isSpeechOutputAvailable()) {
+          await this.homey.speechOutput.say(this.homey.__("rf_learn.long_press"));
+        } else {
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
+        }
+
+        const frequencyBytes = await this._communicate.checkRFData_rm4pro();
+        let frequency =
+          (frequencyBytes[0] | (frequencyBytes[1] << 8) | (frequencyBytes[2] << 16) | (frequencyBytes[3] << 24)) / 1000.0;
+
+        setTimeout(() => this.setWarning(null), 2000, await this.setWarning("Frequency : ", frequency, "MHz"));
+
+        this._utils.debugLog(this, `>>> Frequency bytes: ${frequencyBytes} <<<`);
+        if (this.isSpeechOutputAvailable()) {
+          await this.homey.speechOutput.say(this.homey.__("rf_learn.multi_presses"));
+        } else {
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.multi_presses")));
+        }
+
+        if (type == 0x279d || type == 0x27a9) {
+          await this._communicate.enter_learning();
+          data = await this._communicate.check_IR_data_red();
+        } else {
+          data = await this._communicate.checkRFData2_rm4pro(frequencyBytes);
+        }
+
+        if (data) {
+          let idx = this.dataStore.dataArray.length + 1;
+          let cmdname = "rf-cmd" + idx;
+          this.dataStore.addCommand(cmdname, data);
+          await this.storeCmdSetting(cmdname);
+        }
+
+        await this.stopRfLearning();
+
+        if (this.isSpeechOutputAvailable()) {
+          await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
+        } else {
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+        }
+      } catch (e) {
+        this._utils.debugLog(this, "**> Learning RF failed :", e);
+
+        if (this.isSpeechOutputAvailable()) {
+          await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
+        } else {
+          setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+        }
+
+        await this.stopRfLearning();
+      }
+    });
+
     return true;
   }
-  this.learn = true;
 
-  this.setCapabilityValue("learningStateRF", true).catch(this.error);
-
-  let type = this.getData().devtype;
-  try {
-    var data;
-    //temporary !!!!! remove after right settings ! (polling)
-    await this._communicate.checkTemperature_rm4pro();
-    await this._communicate.checkHumidity_rm4pro();
-    await this._communicate.enterRFSweep_rm4pro();
-
-    if (this.isSpeechOutputAvailable()) {
-      await this.homey.speechOutput.say(this.homey.__("rf_learn.long_press"));
-    } else {
-      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
-    }
-
-    await this._communicate.checkRFData_rm4pro();
-
-    if (this.isSpeechOutputAvailable()) {
-      await this.homey.speechOutput.say(this.homey.__("rf_learn.multi_presses"));
-    } else {
-      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.multi_presses")));
-    }
-
-    if (type == 0x279d || type == 0x27a9) {
-      await this._communicate.enter_learning();
-      data = await this._communicate.check_IR_data();
-    } else {
-      data = await this._communicate.checkRFData2_rm4pro();
-    }
-    if (data) {
-      let idx = this.dataStore.dataArray.length + 1;
-      let cmdname = "rf-cmd" + idx;
-      this.dataStore.addCommand(cmdname, data);
-      await this.storeCmdSetting(cmdname);
-    }
-    await this.stopRfLearning();
-
-    if (this.isSpeechOutputAvailable()) {
-      await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
-    } else {
-      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
-    }
-
-    return true;
-  } catch (e) {
-    this._utils.debugLog(this, "**> Learning RF failed :",e);
-
-    if (this.isSpeechOutputAvailable()) {
-      await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
-    } else {
-      setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
-    }
-
-    await this.stopRfLearning();
-    return false;
-  }
-}
-
-/**
+  /**
    * Checks if speech output is available on the current platform
    * @returns {boolean}
    */
-isSpeechOutputAvailable() {
-  const platform = this.homey.platform;
-  const platformVersion = this.homey.platformVersion;
+  isSpeechOutputAvailable() {
+    const platform = this.homey.platform;
+    const platformVersion = this.homey.platformVersion;
 
-  // Log the platform and platform version
-  this._utils.debugLog(this, `isSpeechOutputAvailable: platform=${platform}, platformVersion=${platformVersion}`);
+    // Log the platform and platform version
+    this._utils.debugLog(this, `isSpeechOutputAvailable: platform=${platform}, platformVersion=${platformVersion}`);
 
-  // Speech output is available only if the platform is "local" or undefined and the platform version is exactly 1
-  if ((platform === "local" || platform === undefined) && platformVersion === 1) {
-    return true;
+    // Speech output is available only if the platform is "local" or undefined and the platform version is exactly 1
+    if ((platform === "local" || platform === undefined) && platformVersion === 1) {
+      return true;
+    }
+
+    // Otherwise, speech output is not available
+    return false;
   }
 
-  // Otherwise, speech output is not available
-  return false;
-}
+  async pollTempHumidity() {
+    try {
+      const { temperature, humidity } = await this._communicate.checkTempHumidity_rm4pro();
+      const tempValue = parseFloat(`${temperature[0]}.${temperature[1]}`);
+      const humidityValue = parseFloat(`${humidity[0]}.${humidity[1]}`);
+
+      await this.setCapabilityValue("measure_temperature_rm4", tempValue).catch(this.error);
+      await this.setCapabilityValue("measure_humidity_rm4", humidityValue).catch(this.error);
+
+      this._utils.debugLog(this, `Polled Temperature: ${tempValue} °C, Humidity: ${humidityValue} %`);
+    } catch (err) {
+      this._utils.debugLog(this, `Error polling temperature and humidity: ${err.message}`);
+    }
+  }
 
   /**
    * This method will be called when a device has been removed.
    */
   onDeleted() {
+    this._utils.debugLog(this, 'Device deleted' + id);
+    clearInterval(this.pollInterval); // Clear the polling interval
     this.dataStore.deleteAllCommands();
   }
 }

@@ -1,8 +1,8 @@
 {
   "type": "boolean",
   "title": {
-    "en": "Learning State",
-    "nl": "Leerstatus"
+    "en": "Learning IR",
+    "nl": "Leerstatus IS"
   },
   "getable": true,
   "setable": false,
@@ -16,5 +16,5 @@
     "en": "Learning mode is inactive",
     "nl": "Leer modus is inactief"
   },
-  "icon": "/assets/learningState.svg"
+  "icon": "/assets/infrared.svg"
 }
