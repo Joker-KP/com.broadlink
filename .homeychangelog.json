@@ -85,5 +85,8 @@
   },
   "3.1.29": {
     "en": "Another fix for SP2 / SP3s devices"
+  },
+  "3.1.30": {
+    "en": "Added RM4 Pro support (IR/RF/temperature/humidity)"
   }
 }
