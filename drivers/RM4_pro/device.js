@@ -205,7 +205,6 @@ class RM4ProDevice extends BroadlinkDevice {
       this._utils.debugLog(this, `>> Key not known, launching autentification during OnInit <<`);
       await this.authenticateDevice();
     }
-
     await this.pollTempHumidity(); // Initial poll
   }
 
