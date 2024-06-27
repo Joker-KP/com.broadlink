@@ -52,7 +52,7 @@ class RM4ProDevice extends BroadlinkDevice {
    */
   updateSettings() {
     let settings = this.getSettings();
-    console.log("**> Current settings before update:", settings);
+    this.debugLog(null, "**> Current settings before update:", settings);
 
     // Clear all settings
     var idx = 0;
@@ -69,7 +69,7 @@ class RM4ProDevice extends BroadlinkDevice {
     const updates = {};
     this.dataStore.getCommandNameList().forEach((s) => {
       updates[settingName] = s;
-      console.log(`**> Setting ${settingName} set to ${s}`);
+      this.debugLog(null, `**> Setting ${settingName} set to ${s}`);
       idx++;
       settingName = "RcCmd" + idx;
     });
@@ -78,10 +78,10 @@ class RM4ProDevice extends BroadlinkDevice {
       .then(() => {
         // Log the updated settings after saving
         const updatedSettings = this.getSettings();
-        console.log("**> Updated settings:", updatedSettings);
+        this.debugLog(null, "**> Updated settings:", updatedSettings);
       })
       .catch((err) => {
-        console.log("**> Error updating settings:", err);
+        this.debugLog(null, "**> Error updating settings:", err);
       });
   }
 
@@ -476,7 +476,7 @@ class RM4ProDevice extends BroadlinkDevice {
    * This method will be called when a device has been removed.
    */
   onDeleted() {
-    this._utils.debugLog(this, 'Device deleted' + id);
+    this._utils.debugLog(this, 'Device deleted, will be deleting all commands :'+ this.getData().id);
     clearInterval(this.pollInterval); // Clear the polling interval
     this.dataStore.deleteAllCommands();
   }
