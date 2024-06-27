@@ -88,5 +88,8 @@
   },
   "3.1.30": {
     "en": "Added RM4 Pro support (IR/RF/temperature/humidity)"
+  },
+  "3.1.31": {
+    "en": "Improved logging"
   }
 }
