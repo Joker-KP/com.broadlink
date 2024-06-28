@@ -100,5 +100,8 @@
   },
   "3.1.34": {
     "en": "Prevent future JSON corruption, Power measurement adjustments when powering off SP3s sockets"
+  },
+  "3.1.35": {
+    "en": "Ensure corrupted JSON is erased, so that device can be re-learned without re-adding"
   }
 }
