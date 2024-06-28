@@ -228,8 +228,6 @@ class RM4miniDevice extends BroadlinkDevice {
    */
   async onSettings({ oldSettings, newSettings, changedKeys }) {
     this._utils.debugLog(this, "Settings changed:", changedKeys);
-    //this._utils.debugLog(this, 'Old settings:', oldSettings);
-    //this._utils.debugLog(this, 'New settings:', newSettings);
 
     for (let i = 0; i < changedKeys.length; i++) {
       const key = changedKeys[i];
@@ -245,7 +243,8 @@ class RM4miniDevice extends BroadlinkDevice {
             throw new Error(this.homey.__("errors.save_settings_exist", { cmd: newName }));
           }
           // Rename the command if the old name exists and new name is provided
-          if (this.dataStore.renameCommand(oldName, newName)) {
+          const renamed = await this.dataStore.renameCommand(oldName, newName);
+          if (renamed) {
             this._utils.debugLog(this, `Command renamed from ${oldName} to ${newName}`);
           } else {
             this._utils.debugLog(this, `Failed to rename command ${oldName} to ${newName}`);
@@ -256,7 +255,7 @@ class RM4miniDevice extends BroadlinkDevice {
         }
       } else {
         if (oldName && oldName.length > 0) {
-          this.dataStore.deleteCommand(oldName);
+          await this.dataStore.deleteCommand(oldName);
           this._utils.debugLog(this, `Command ${oldName} deleted.`);
         }
       }

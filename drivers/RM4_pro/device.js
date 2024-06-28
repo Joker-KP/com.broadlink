@@ -52,7 +52,7 @@ class RM4ProDevice extends BroadlinkDevice {
    */
   updateSettings() {
     let settings = this.getSettings();
-    this.debugLog(null, "**> Current settings before update:", settings);
+    this._utils.debugLog(null, "**> Current settings before update:", settings);
 
     // Clear all settings
     var idx = 0;
@@ -69,7 +69,7 @@ class RM4ProDevice extends BroadlinkDevice {
     const updates = {};
     this.dataStore.getCommandNameList().forEach((s) => {
       updates[settingName] = s;
-      this.debugLog(null, `**> Setting ${settingName} set to ${s}`);
+      this._utils.debugLog(null, `**> Setting ${settingName} set to ${s}`);
       idx++;
       settingName = "RcCmd" + idx;
     });
@@ -78,10 +78,10 @@ class RM4ProDevice extends BroadlinkDevice {
       .then(() => {
         // Log the updated settings after saving
         const updatedSettings = this.getSettings();
-        this.debugLog(null, "**> Updated settings:", updatedSettings);
+        this._utils.debugLog(null, "**> Updated settings:", updatedSettings);
       })
       .catch((err) => {
-        this.debugLog(null, "**> Error updating settings:", err);
+        this._utils.debugLog(null, "**> Error updating settings:", err);
       });
   }
 
@@ -182,10 +182,22 @@ class RM4ProDevice extends BroadlinkDevice {
     this.registerCapabilityListener("learnIRcmd", this.onCapabilityLearnIR.bind(this));
     this.registerCapabilityListener("learnRFcmd", this.onCapabilityLearnRF.bind(this));
 
-    this.dataStore = new DataStore(this.getData().mac);
-    await this.dataStore.readCommands(async () => {
-      this.updateSettings();
-    });
+    try {
+      this.dataStore = new DataStore(this.getData().mac);
+      await this.dataStore.readCommands(async () => {
+        this.updateSettings();
+      });
+    } catch (err) {
+      if (err instanceof SyntaxError && err.message.includes("Unexpected token")) {
+        this._utils.debugLog(this, `Device.onInit Error: ${err.message}`);
+        await this.dataStore.deleteAllCommands();
+        this._utils.debugLog(this, "Corrupted JSON detected and deleted.");
+        this.updateSettings(); // Call updateSettings again after deleting corrupted JSON
+      } else {
+        this._utils.debugLog(this, `Device.onInit Error: ${err.message}`);
+        throw err; // Re-throw if it's not the specific error we're handling
+      }
+    }
 
     this.homey.drivers.getDriver("RM4_pro").ready(() => {
       this._utils.debugLog(this, "RM4ProDevice: onInit: driver ready");
@@ -287,8 +299,6 @@ class RM4ProDevice extends BroadlinkDevice {
    */
   async onSettings({ oldSettings, newSettings, changedKeys }) {
     this._utils.debugLog(this, "Settings changed:", changedKeys);
-    //this._utils.debugLog(this, 'Old settings:', oldSettings);
-    //this._utils.debugLog(this, 'New settings:', newSettings);
 
     for (let i = 0; i < changedKeys.length; i++) {
       const key = changedKeys[i];
@@ -304,7 +314,8 @@ class RM4ProDevice extends BroadlinkDevice {
             throw new Error(this.homey.__("errors.save_settings_exist", { cmd: newName }));
           }
           // Rename the command if the old name exists and new name is provided
-          if (this.dataStore.renameCommand(oldName, newName)) {
+          const renamed = await this.dataStore.renameCommand(oldName, newName);
+          if (renamed) {
             this._utils.debugLog(this, `Command renamed from ${oldName} to ${newName}`);
           } else {
             this._utils.debugLog(this, `Failed to rename command ${oldName} to ${newName}`);
@@ -315,7 +326,7 @@ class RM4ProDevice extends BroadlinkDevice {
         }
       } else {
         if (oldName && oldName.length > 0) {
-          this.dataStore.deleteCommand(oldName);
+          await this.dataStore.deleteCommand(oldName);
           this._utils.debugLog(this, `Command ${oldName} deleted.`);
         }
       }
@@ -476,7 +487,7 @@ class RM4ProDevice extends BroadlinkDevice {
    * This method will be called when a device has been removed.
    */
   onDeleted() {
-    this._utils.debugLog(this, 'Device deleted, will be deleting all commands :'+ this.getData().id);
+    this._utils.debugLog(this, "Device deleted, will be deleting all commands :" + this.getData().id);
     clearInterval(this.pollInterval); // Clear the polling interval
     this.dataStore.deleteAllCommands();
   }
