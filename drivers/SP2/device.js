@@ -200,18 +200,36 @@ class SP2Device extends BroadlinkDevice {
   do_action_power_on() {
     this.set_power(true);
     this.setCapabilityValue("onoff.power", true);
-    let energy = this.get_energy();
-    this._utils.debugLog(this, `Energy reading: ${energy}`);
-    this.setCapabilityValue("measure_power", energy);
+    this.get_energy()
+      .then(energy => {
+        this._utils.debugLog(this, `Energy reading: ${energy}`);
+        if (typeof energy === 'number') {
+          this.setCapabilityValue("measure_power", energy);
+        } else {
+          this._utils.debugLog(this, "Invalid energy reading, not updating measure_power");
+        }
+      })
+      .catch(err => {
+        this._utils.debugLog(this, "Error fetching energy reading:", err);
+      });
     return Promise.resolve(true);
-  }
+  } 
 
   do_action_power_off() {
     this.set_power(false);
     this.setCapabilityValue("onoff.power", false);
-    let energy = this.get_energy();
-    this._utils.debugLog(this, `Energy reading: ${energy}`);
-    this.setCapabilityValue("measure_power", energy);
+    this.get_energy()
+      .then(energy => {
+        this._utils.debugLog(this, `Energy reading: ${energy}`);
+        if (typeof energy === 'number') {
+          this.setCapabilityValue("measure_power", energy);
+        } else {
+          this._utils.debugLog(this, "Invalid energy reading, not updating measure_power");
+        }
+      })
+      .catch(err => {
+        this._utils.debugLog(this, "Error fetching energy reading:", err);
+      });
     return Promise.resolve(true);
   }
 
