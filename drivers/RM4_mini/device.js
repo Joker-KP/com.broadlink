@@ -143,10 +143,22 @@ class RM4miniDevice extends BroadlinkDevice {
 
     this.registerCapabilityListener("learnIRcmd", this.onCapabilityLearnIR.bind(this));
 
-    this.dataStore = new DataStore(this.getData().mac);
-    await this.dataStore.readCommands(async () => {
-      this.updateSettings();
-    });
+    try {
+      this.dataStore = new DataStore(this.getData().mac);
+      await this.dataStore.readCommands(async () => {
+        this.updateSettings();
+      });
+    } catch (err) {
+      if (err instanceof SyntaxError && err.message.includes("Unexpected token")) {
+        this._utils.debugLog(this, `Device.onInit Error: ${err.message}`);
+        await this.dataStore.deleteAllCommands();
+        this._utils.debugLog(this, "Corrupted JSON detected and deleted.");
+        this.updateSettings(); // Call updateSettings again after deleting corrupted JSON
+      } else {
+        this._utils.debugLog(this, `Device.onInit Error: ${err.message}`);
+        throw err; // Re-throw if it's not the specific error we're handling
+      }
+    }
   }
 
   /**
