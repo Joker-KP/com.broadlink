@@ -90,10 +90,10 @@ class RM4miniDevice extends BroadlinkDevice {
 
       let drv = this.driver;
       // RC_specific_sent: user entered command name
-      drv.rm4_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
+      drv.rm4_mini_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
 
       // RC_sent_any: set token
-      drv.rm4_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
+      drv.rm4_mini_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
     } catch (e) {}
 
     return Promise.resolve(true);

@@ -185,6 +185,38 @@ class RmPlusDevice extends RM3MiniDevice {
   }
 
   
+  async executeCommand(args) {
+    try {
+      let cmd = args["variable"];
+
+      this._utils.debugLog(this, "executeCommand " + cmd.name);
+
+      // send the command
+      let cmdData = this.dataStore.getCommandData(cmd.name);
+
+      const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
+      if (deviceType == 0x5f36) {
+        // 0x5F36 for Red Bean
+        await this._communicate.send_IR_RF_data_red(cmdData);
+      } else {
+        await this._communicate.send_IR_RF_data(cmdData);
+      }
+
+      cmdData = null;
+
+      let drv = this.driver;
+      // RC_specific_sent: user entered command name
+      drv.rmplus_specific_cmd_trigger.trigger(this, {}, { variable: cmd.name });
+
+      // RC_sent_any: set token
+      drv.rmplus_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
+    } catch (e) {
+      this._utils.debugLog(this, `Error executing command: ${e}`);
+    }
+
+    return Promise.resolve(true);
+  }
+  
   /**
    * Checks if speech output is available on the current platform
    * @returns {boolean}
