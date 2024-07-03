@@ -109,5 +109,8 @@
   },
   "3.1.37": {
     "en": "Fixes for storing and sending IR command - RM4Mini/RMPlus/RMPro. If IR will not work, please delete command and re-learn"
+  },
+  "3.1.38": {
+    "en": "Notifications adjustments - RM4Pro/RMPlus/RMPro"
   }
 }
