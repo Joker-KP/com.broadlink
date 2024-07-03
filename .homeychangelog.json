@@ -106,5 +106,8 @@
   },
   "3.1.36": {
     "en": "DataStore small fix - allow to delete all commands stored"
+  },
+  "3.1.37": {
+    "en": "Fixes for storing and sending IR command - RM4Mini/RMPlus/RMPro. If IR will not work, please delete command and re-learn"
   }
 }
