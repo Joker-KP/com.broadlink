@@ -254,7 +254,7 @@ class RM4ProDevice extends BroadlinkDevice {
         this._utils.debugLog(this, "Entered learning mode");
 
         let data = await this._communicate.check_IR_data_red();
-        this._utils.debugLog(this, `Checked IR data, data: ${data}`);
+        this._utils.debugLog(this, `Checked IR data, data: `, this._utils.asHex(data));
 
         if (data) {
           let idx = this.dataStore.dataArray.length + 1;
