@@ -51,7 +51,7 @@ class RmProDevice extends RM3MiniDevice {
       if (this.isSpeechOutputAvailable()) {
         await this.homey.speechOutput.say(this.homey.__("rf_learn.long_press"));
       } else {
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.long_press")));
+        setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.long_press")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
       }
 
       await this._communicate.checkRFData();
@@ -59,7 +59,7 @@ class RmProDevice extends RM3MiniDevice {
       if (this.isSpeechOutputAvailable()) {
         await this.homey.speechOutput.say(this.homey.__("rf_learn.multi_presses"));
       } else {
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.multi_presses")));
+        setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.multi_presses")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
       }
 
       if (type == 0x279d || type == 0x27a9) {
@@ -79,7 +79,7 @@ class RmProDevice extends RM3MiniDevice {
       if (this.isSpeechOutputAvailable()) {
         await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
       } else {
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+        setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.done")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
       }
 
       return true;
@@ -87,9 +87,9 @@ class RmProDevice extends RM3MiniDevice {
       this._utils.debugLog(this, "**> Learning RF failed");
 
       if (this.isSpeechOutputAvailable()) {
-        await this.homey.speechOutput.say(this.homey.__("rf_learn.done"));
+        await this.homey.speechOutput.say(this.homey.__("rf_learn.error"));
       } else {
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(this.homey.__("rf_learn.done")));
+        setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.error")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
       }
 
       await this.stopRfLearning();
