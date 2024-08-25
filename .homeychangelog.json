@@ -118,5 +118,8 @@
   },
   "3.1.40": {
     "en": "Small adjustment for comm. method"
+  },
+  "3.1.41": {
+    "en": "Minor adjustments for error reporting"
   }
 }
