@@ -222,7 +222,9 @@ class RM4miniDevice extends BroadlinkDevice {
         this._utils.debugLog(this, `Error during IR learning: ${e}`);
         await this.setCapabilityValue("learnIRcmd", false).catch(this.error); // Turn off the capability after error
         await this.setCapabilityValue("learningState", false).catch(this.error);
-        setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`IR learning failed: ${e}`));
+        /*setTimeout(() => this.setWarning(null), 5000, await this.setWarning(`IR learning failed: ${e}`));*/
+        await this.setWarning(`IR learning failed: ${e}`);
+        setTimeout(async () => { if (this.getData()) { await this.setWarning(null).catch(this.error); } }, 5000);
         this.learn = false;
         return false;
       }

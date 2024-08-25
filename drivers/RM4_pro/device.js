@@ -441,7 +441,8 @@ class RM4ProDevice extends BroadlinkDevice {
         if (this.isSpeechOutputAvailable()) {
           await this.homey.speechOutput.say(this.homey.__("rf_learn.error"));
         } else {
-          setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.error")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
+          /*setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.error")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);*/
+          setTimeout(async () => { if (this.getData()) { await this.setWarning(this.homey.__("rf_learn.error")); setTimeout(async () => { if (this.getData()) { await this.unsetWarning().catch(this.error); } }, 6000); } }, 0);
         }
 
         await this.stopRfLearning();
