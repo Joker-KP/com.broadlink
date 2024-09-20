@@ -16,21 +16,23 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const Homey = require('homey');
+const Homey = require("homey");
 
 /**
  * Main entry point for app.
  */
 class BroadlinkApp extends Homey.App {
+  async onInit() {
+    if (process.env.DEBUG === "1") {
+      require("inspector").open(9223, "0.0.0.0", true);
+    }
 
-	async onInit() {
-
-		this.homey.on('memwarn', () => {
-			// simply ignore it
-		})
-	}
+    this.homey.on("memwarn", () => {
+      // simply ignore it
+    });
+  }
 }
 
 module.exports = BroadlinkApp;
