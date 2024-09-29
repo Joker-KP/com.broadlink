@@ -124,5 +124,8 @@
   },
   "3.1.42": {
     "en": "Improvements for the pairing process"
+  },
+  "3.1.43": {
+    "en": "Fix for Hysen / periodic updates"
   }
 }
