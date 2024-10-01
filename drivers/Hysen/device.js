@@ -93,9 +93,9 @@ class HysenDevice extends BroadlinkDevice {
     if (this.data["TargetTemperature"]) {
       this.setCapabilityValue("target_temperature", this.data["TargetTemperature"]);
     }
-    if (this.data["ParentalMode"] != this.getCapabilityValue("parental_mode")) {
+    if (this.data["ParentalMode"] !== this.getCapabilityValue("parental_mode")) {
       this._trigger_parentalmode();
-      this.setCapabilityValue("parental_mode", this.data["ParentalMode"]);
+      this.setCapabilityValue("parental_mode", !!this.data["ParentalMode"]);
     }
   }
 
@@ -349,7 +349,7 @@ class HysenDevice extends BroadlinkDevice {
       this.data["active"] = (response[4] >> 4) & 1;
       this.data["temp_manual"] = (response[4] >> 6) & 1;
       this.data["RoomTemperature"] = response[5] / 2.0;
-      this.data["TargetTemperture"] = response[6] / 2.0;
+      this.data["TargetTemperature"] = response[6] / 2.0;
       this.data["AutoMode"] = (response[7] & 15).toString();
       this.data["LoopMode"] = ((response[7] >> 4) & 0x0f).toString();
       this.data["SensorMode"] = response[8].toString();
@@ -564,25 +564,26 @@ class HysenDevice extends BroadlinkDevice {
   }
 
   async onCapabilityParentalMode(mode) {
-    this.data["ParentalMode"] = mode;
-    await this.set_power(this.data["power"], mode);
+    this.data["ParentalMode"] = !!mode; // Force boolean
+    await this.set_power(this.data["power"], this.data["ParentalMode"]);
     this._trigger_parentalmode();
   }
+  
 
   async onInit() {
     try {
       await super.onInit();
-      this.data = [];
+      this.data = {};
       this.registerCapabilityListener("target_temperature", this.onCapabilityTargetTemperature.bind(this));
       this.registerCapabilityListener("parental_mode", this.onCapabilityParentalMode.bind(this));
-
+  
       // Initial data fetch after a 4-second delay
       setTimeout(
         async function () {
           try {
             await this.get_full_status();
             await this.get_temperature();
-
+  
             // Start periodic updates after initial fetch
             const checkInterval = this.getSettings().CheckInterval || 5; // Default to 5 minutes if not set
             this.start_check_interval(checkInterval);
@@ -596,6 +597,7 @@ class HysenDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "**> HysenDevice.onInit: catch = " + error);
     }
   }
+  
 
   /**
    * This method will be called when a device has been removed.
