@@ -127,5 +127,8 @@
   },
   "3.1.43": {
     "en": "Fix for Hysen / periodic updates"
+  },
+  "3.1.44": {
+    "en": "Additional fixes for Hysen"
   }
 }
