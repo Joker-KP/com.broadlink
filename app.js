@@ -19,14 +19,16 @@
 "use strict";
 
 const Homey = require("homey");
+const DEBUG = process.env.DEBUG === "1";
 
 /**
  * Main entry point for app.
  */
 class BroadlinkApp extends Homey.App {
   async onInit() {
-    if (process.env.DEBUG === "1") {
-      require("inspector").open(9223, "0.0.0.0", true);
+    this.log(`${this.id} is running...(debug mode ${DEBUG ? "on" : "off"})`);
+    if (DEBUG) {
+      require("inspector").open(9223, "0.0.0.0");
     }
 
     this.homey.on("memwarn", () => {

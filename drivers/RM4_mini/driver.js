@@ -20,6 +20,8 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
@@ -35,7 +37,8 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x51DA   // RM4 Mini
+			//CompatibilityID: 0x51DA   // RM4 Mini
+			CompatibilityID: BroadlinkType.RM4mini
 		});
 
 		//this.rm4_action_send_cmd = new Homey.FlowCardAction('send_command');

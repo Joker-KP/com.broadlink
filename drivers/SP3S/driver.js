@@ -20,6 +20,8 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class SP3SDriver extends BroadlinkDriver {
 
@@ -50,7 +52,8 @@ class SP3SDriver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x9479   // SP3S
+			//CompatibilityID: 0x9479   // SP3S
+			CompatibilityID: BroadlinkType.SP3plus
 		});
 
 		this.trigger_power_toggle = this.homey.flow.getDeviceTriggerCard('sp3s_onoff_power');

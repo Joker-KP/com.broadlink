@@ -20,6 +20,8 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class DooyaDriver extends BroadlinkDriver {
 
@@ -42,7 +44,8 @@ class DooyaDriver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x4E4D   // DOOYA
+			//CompatibilityID: 0x4E4D   // DOOYA
+			CompatibilityID: BroadlinkType.DOOYA
 		});
 
 		this.trigger_open = this.homey.flow.getDeviceTriggerCard('dooya_opened')

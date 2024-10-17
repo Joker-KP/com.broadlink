@@ -19,7 +19,9 @@
 'use strict';
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-const Homey = require('homey');
+
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;const Homey = require('homey');
 const BroadlinkUtils = require('./../../lib/BroadlinkUtils.js');
 
 
@@ -39,7 +41,8 @@ class HysenDriver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x4EAD   // HYSEN
+			//CompatibilityID: 0x4EAD   // HYSEN
+			CompatibilityID: BroadlinkType.HYSEN
 		});
 
 		// temperature FlowCards are added automatically

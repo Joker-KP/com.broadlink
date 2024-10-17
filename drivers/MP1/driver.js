@@ -20,6 +20,8 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class BroadlinkMP1Driver extends BroadlinkDriver {
 
@@ -38,7 +40,8 @@ class BroadlinkMP1Driver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x4EB5 // MP1
+			//CompatibilityID: 0x4EB5 // MP1
+			CompatibilityID: BroadlinkType.MP1
 		});
 
 		this.trigger_toggle = this.homey.flow.getDeviceTriggerCard('mp1_onoff_change')

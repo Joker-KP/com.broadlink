@@ -20,10 +20,14 @@
 
 const BroadlinkDriver = require("../../lib/BroadlinkDriver");
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
+
 class BroadlinkRM4ProDriver extends BroadlinkDriver {
   async onInit() {
     super.onInit({
-      CompatibilityID: 0x520b // RM4 PRO
+      //CompatibilityID: 0x520b // RM4 PRO
+      CompatibilityID: BroadlinkType.RM4Pro
     });
 
     //this.rm4_action_send_cmd = new Homey.FlowCardAction('send_command');

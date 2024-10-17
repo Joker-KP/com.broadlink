@@ -19,8 +19,11 @@
 "use strict";
 
 const Homey = require("homey");
-const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
-const BroadlinkUtils = require("./../../lib/BroadlinkUtils.js");
+
+const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
+
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class BroadlinkSP2Driver extends BroadlinkDriver {
   check_condition_power_on(args, state) {
@@ -49,7 +52,8 @@ class BroadlinkSP2Driver extends BroadlinkDriver {
 
   async onInit() {
     super.onInit({
-      CompatibilityID: 0x2711 // SP2
+      //CompatibilityID: 0x2711 // SP2
+      CompatibilityID: BroadlinkType.SP2
     });
 
     this.trigger_power_toggle = this.homey.flow.getDeviceTriggerCard("sp2_onoff_power");

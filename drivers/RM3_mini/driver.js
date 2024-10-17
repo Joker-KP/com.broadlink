@@ -20,10 +20,14 @@
 
 const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
+
 class BroadlinkRM3miniDriver extends BroadlinkDriver {
   async onInit() {
     super.onInit({
-      CompatibilityID: 0x2737 // RM3 Mini
+      //CompatibilityID: 0x2737 // RM3 Mini
+      CompatibilityID: BroadlinkType.RM
     });
     this.rm3mini_action_send_cmd = this.homey.flow.getActionCard("send_command_rm3mini");
     this.rm3mini_action_send_cmd

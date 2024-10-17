@@ -20,11 +20,15 @@
 
 const BroadlinkRM3miniDriver = require('./../RM3_mini/driver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
+
 class BroadlinkRMProDriver extends BroadlinkRM3miniDriver {
 
     async onInit() {
         await super.onInit({
-            CompatibilityID: 0x273d // RM PRO
+            //CompatibilityID: 0x273d // RM PRO
+            CompatibilityID: BroadlinkType.RM
           });
 
         // Initialize and register flow card action for sending command specific to RM Pro

@@ -20,12 +20,15 @@
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
 
+const DeviceInfo = require("./../../lib/DeviceInfo.js");
+const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class BroadlinkA1Driver extends BroadlinkDriver {
 
 	async onInit() {
 		super.onInit({
-			CompatibilityID: 0x2714   // A1
+			//CompatibilityID: 0x2714   // A1
+			CompatibilityID: BroadlinkType.A1
 		});
 
 		this.a1_condition_air_quality = this.homey.flow.getConditionCard('a1_air_quality');
