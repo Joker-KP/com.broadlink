@@ -130,5 +130,8 @@
   },
   "3.1.44": {
     "en": "Additional fixes for Hysen"
+  },
+  "3.1.45": {
+    "en": "Device compatibility check adjustments during pairing"
   }
 }
