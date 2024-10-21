@@ -16,7 +16,7 @@
  * along with com.broadlink.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
 
@@ -24,11 +24,13 @@ const DeviceInfo = require("./../../lib/DeviceInfo.js");
 const BroadlinkType = DeviceInfo.BroadlinkType;
 
 class BroadlinkRM3miniDriver extends BroadlinkDriver {
-  async onInit() {
-    super.onInit({
+  async onInit(options = {}) {
+    if (!options.CompatibilityID) {
       //CompatibilityID: 0x2737 // RM3 Mini
-      CompatibilityID: BroadlinkType.RM
-    });
+      options.CompatibilityID = BroadlinkType.RM; // Set default CompatibilityID
+    }
+    super.onInit(options);
+
     this.rm3mini_action_send_cmd = this.homey.flow.getActionCard("send_command_rm3mini");
     this.rm3mini_action_send_cmd
       .registerRunListener(this.do_exec_cmd.bind(this))
