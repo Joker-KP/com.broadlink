@@ -98,9 +98,11 @@ class RM3miniDevice extends BroadlinkDevice {
 
       // send the command
       let cmdData = this.dataStore.getCommandData(cmd.name);
+      // Parse deviceType as a number
+      const deviceType = parseInt(this.getData().devtype, 10);
+      this._utils.debugLog(this, `Device type: 0x${deviceType.toString(16)}`);
 
-      const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
-      if (deviceType == 0x5f36) {
+      if (deviceType === 0x5f36) {
         // 0x5F36 for Red Bean
         await this._communicate.send_IR_RF_data_red(cmdData);
       } else {
@@ -214,10 +216,11 @@ class RM3miniDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "Starting IR learning mode");
 
       try {
-        const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
-        this._utils.debugLog(this, `Device type: ${deviceType}`);
+        // Parse deviceType as a number
+        const deviceType = parseInt(this.getData().devtype, 10);
+        this._utils.debugLog(this, `Device type: 0x${deviceType.toString(16)}`);
 
-        if (deviceType == 0x5f36) {
+        if (deviceType === 0x5f36) {
           // 0x5F36 for Red Bean
 
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
@@ -229,7 +232,7 @@ class RM3miniDevice extends BroadlinkDevice {
 
         let data;
         // useless check - seems that check_IR_data does have already modification for 0x5F36
-        if (deviceType == 0x5f36) {
+        if (deviceType === 0x5f36) {
           // 0x5F36 for Red Bean
           data = await this._communicate.check_IR_data_red();
         } else {
@@ -350,7 +353,7 @@ class RM3miniDevice extends BroadlinkDevice {
    * This method will be called when a device has been removed.
    */
   onDeleted() {
-    this._utils.debugLog(this, 'Device deleted, will be deleting all commands :'+ this.getData().id);
+    this._utils.debugLog(this, 'Device deleted, will be deleting all commands :' + this.getData().id);
     this.dataStore.deleteAllCommands();
   }
 }
