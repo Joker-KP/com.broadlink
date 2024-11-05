@@ -414,13 +414,12 @@ class RM4ProDevice extends BroadlinkDevice {
           setTimeout(async () => { await this.setWarning(this.homey.__("rf_learn.multi_presses")); setTimeout(async () => { await this.unsetWarning(); }, 6000); }, 0);
         }
 
-        // filtered out as checks for 0x279d are useless withim RM4 Device
-      /*  if (type == 0x279d || type == 0x27a9) {
+        if (type == 0x279d || type == 0x27a9) {
           await this._communicate.enter_learning();
           data = await this._communicate.check_IR_data_red();
-        } else {*/
+        } else {
           data = await this._communicate.checkRFData2_rm4pro(frequencyBytes);
-        //}
+        }
 
         if (data) {
           let idx = this.dataStore.dataArray.length + 1;
