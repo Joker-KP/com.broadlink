@@ -238,7 +238,8 @@ class RM3miniDevice extends BroadlinkDevice {
         // useless check - seems that check_IR_data does have already modification for 0x5F36
         if (deviceType === 0x5f36) {
           // 0x5F36 for Red Bean
-          data = await this._communicate.check_IR_data_red();
+          //data = await this._communicate.check_IR_data_red();
+          data = await this._communicate.check_IR_data();
         } else {
           data = await this._communicate.check_IR_data();
         }
