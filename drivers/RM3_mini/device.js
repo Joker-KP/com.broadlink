@@ -226,9 +226,7 @@ class RM3miniDevice extends BroadlinkDevice {
           // 0x5F36 for Red Bean
 
           this._utils.debugLog(this, "Using enter_learning_red for RM Mini 3 Red Bean");
-          // based on user testing, seems even for Red Bean the method is the same
           await this._communicate.enter_learning_red();
-          //await this._communicate.enter_learning();
         } else {
           this._utils.debugLog(this, "Using enter_learning for other RM devices");
           await this._communicate.enter_learning();
