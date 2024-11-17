@@ -139,5 +139,8 @@
   },
   "3.1.54": {
     "en": "Reverting RM3 Mini RedBean changes to previous state "
+  },
+  "3.1.55": {
+    "en": "Attempt to address RM3 Mini RedBean sending IR code issue"
   }
 }
