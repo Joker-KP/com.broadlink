@@ -102,7 +102,8 @@ class RM3miniDevice extends BroadlinkDevice {
       const deviceType = `0x${parseInt(this.getData().devtype, 10).toString(16)}`;
       if (deviceType == 0x5f36) {
         // 0x5F36 for Red Bean
-        await this._communicate.send_IR_RF_data_red(cmdData);
+        //await this._communicate.send_IR_RF_data_red(cmdData);
+        await this._communicate.send_IR_RF_data_minired(cmdData);
       } else {
         await this._communicate.send_IR_RF_data(cmdData);
       }
