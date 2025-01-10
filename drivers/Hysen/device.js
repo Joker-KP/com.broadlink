@@ -342,7 +342,7 @@ class HysenDevice extends BroadlinkDevice {
       var payload = new Uint8Array([0x01, 0x03, 0x00, 0x00, 0x00, 0x16]);
       var response = await this.send_request(payload);
 
-      //this._utils.debugLog(this, "==> hysen.get_full_status - " + this._utils.asHex(response));
+      this._utils.debugLog(this, "==> hysen.get_full_status - " + this._utils.asHex(response));
 
       this.data["ParentalMode"] = response[3] & 1 ? true : false;
       this.data["power"] = response[4] & 1;
@@ -350,8 +350,25 @@ class HysenDevice extends BroadlinkDevice {
       this.data["temp_manual"] = (response[4] >> 6) & 1;
       this.data["RoomTemperature"] = response[5] / 2.0;
       this.data["TargetTemperature"] = response[6] / 2.0;
-      this.data["AutoMode"] = (response[7] & 15).toString();
-      this.data["LoopMode"] = ((response[7] >> 4) & 0x0f).toString();
+      // --------------------------------------------------------------------
+      // ORIGINAL CODE:
+      //
+      // this.data["AutoMode"] = (response[7] & 15).toString();
+      // this.data["LoopMode"] = ((response[7] >> 4) & 0x0F).toString();
+      //
+      let rawAutoMode = response[7] & 0x0f;
+      // If device truly only supports manual=0 or auto=1, clamp to avoid invalid values.
+      if (rawAutoMode > 1) {
+        rawAutoMode = 1; // fallback to 'auto'
+      }
+      this.data["AutoMode"] = rawAutoMode.toString();
+
+      let rawLoopMode = (response[7] >> 4) & 0x0f;
+      // Settings allow "1", "2", or "3". Clamp out-of-range data:
+      if (rawLoopMode < 1) rawLoopMode = 1;
+      if (rawLoopMode > 3) rawLoopMode = 3;
+      this.data["LoopMode"] = rawLoopMode.toString();
+      // --------------------------------------------------------------------
       this.data["SensorMode"] = response[8].toString();
       this.data["TempRangeExtSensor"] = response[9];
       this.data["FloorTempDeadZone"] = response[10];
@@ -568,7 +585,6 @@ class HysenDevice extends BroadlinkDevice {
     await this.set_power(this.data["power"], this.data["ParentalMode"]);
     this._trigger_parentalmode();
   }
-  
 
   async onInit() {
     try {
@@ -576,14 +592,14 @@ class HysenDevice extends BroadlinkDevice {
       this.data = {};
       this.registerCapabilityListener("target_temperature", this.onCapabilityTargetTemperature.bind(this));
       this.registerCapabilityListener("parental_mode", this.onCapabilityParentalMode.bind(this));
-  
+
       // Initial data fetch after a 4-second delay
       setTimeout(
         async function () {
           try {
             await this.get_full_status();
             await this.get_temperature();
-  
+
             // Start periodic updates after initial fetch
             const checkInterval = this.getSettings().CheckInterval || 5; // Default to 5 minutes if not set
             this.start_check_interval(checkInterval);
@@ -597,7 +613,6 @@ class HysenDevice extends BroadlinkDevice {
       this._utils.debugLog(this, "**> HysenDevice.onInit: catch = " + error);
     }
   }
-  
 
   /**
    * This method will be called when a device has been removed.
