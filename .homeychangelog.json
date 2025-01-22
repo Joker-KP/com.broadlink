@@ -145,5 +145,8 @@
   },
   "3.1.56": {
     "en": "Hysen Automode fix"
+  },
+  "3.1.57": {
+    "en": "Debug logging improvements"
   }
 }
