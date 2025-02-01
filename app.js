@@ -19,7 +19,19 @@
 "use strict";
 
 const Homey = require("homey");
+const { Device } = require("homey");
 const DEBUG = process.env.DEBUG === "1";
+
+// Capture the original method for setWarning to prevent errors : Not Found: Device with ID
+const originalSetWarning = Device.prototype.setWarning;
+
+Device.prototype.setWarning = async function (message) {
+  try {
+    await originalSetWarning.call(this, message);
+  } catch (err) {
+    this.log(`Suppressed setWarning error: ${err.message}`);
+  }
+};
 
 /**
  * Main entry point for app.
