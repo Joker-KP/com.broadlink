@@ -148,5 +148,8 @@
   },
   "3.1.57": {
     "en": "Debug logging improvements"
+  },
+  "3.1.58": {
+    "en": "Minor internal adjustment"
   }
 }
