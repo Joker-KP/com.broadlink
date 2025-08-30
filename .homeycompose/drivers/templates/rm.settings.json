@@ -1,6 +1,36 @@
 {
 	"settings": [
 		{
+			"type": "group",
+			"label": {
+				"en": "New Command" },
+			"children": [
+				{
+					"id": "addCommand",
+					"type": "textarea",
+					"label": { "en": "Add custom command" },
+					"value": "",
+					"hint": { "en": "Enter a Base64 command string. It will be stored as a learned code in a free slot, then the field will be cleared." }
+				},
+				{
+					"id": "cmdType",
+					"type": "dropdown",
+					"value": "ir",
+					"label": { "en": "Command type" },
+					"values": [
+						{
+						"id": "ir",
+						"label": { "en": "IR" }
+						},
+						{
+						"id": "rf",
+						"label": { "en": "RF" }
+						}
+					]
+				}
+			]
+		},
+		{
 			"type":"group",
 			"label": {
 				"en": "RC Commands",
@@ -17,11 +47,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd0", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd1",  "type": "text", "value": "", "label": { "en": "2" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd1", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd2",  "type": "text", "value": "", "label": { "en": "3" },
 					"hint": {
@@ -29,11 +63,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd2", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd3",  "type": "text", "value": "", "label": { "en": "4" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd3", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd4",  "type": "text", "value": "", "label": { "en": "5" },
 					"hint": {
@@ -41,11 +79,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd4", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd5",  "type": "text", "value": "", "label": { "en": "6" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd5", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd6",  "type": "text", "value": "", "label": { "en": "7" },
 					"hint": {
@@ -53,11 +95,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd6", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd7",  "type": "text", "value": "", "label": { "en": "8" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd7", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd8",  "type": "text", "value": "", "label": { "en": "9" },
 					"hint": {
@@ -65,11 +111,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd8", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd9",  "type": "text", "value": "", "label": { "en": "10" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd9", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd10", "type": "text", "value": "", "label": { "en": "11" },
 					"hint": {
@@ -77,11 +127,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd10", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd11", "type": "text", "value": "", "label": { "en": "12" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd11", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd12", "type": "text", "value": "", "label": { "en": "13" },
 					"hint": {
@@ -89,11 +143,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd12", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd13", "type": "text", "value": "", "label": { "en": "14" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd13", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd14", "type": "text", "value": "", "label": { "en": "15" },
 					"hint": {
@@ -101,11 +159,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd14", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd15", "type": "text", "value": "", "label": { "en": "16" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd15", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd16", "type": "text", "value": "", "label": { "en": "17" },
 					"hint": {
@@ -113,11 +175,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd16", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd17", "type": "text", "value": "", "label": { "en": "18" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd17", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd18", "type": "text", "value": "", "label": { "en": "19" },
 					"hint": {
@@ -125,11 +191,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd18", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd19", "type": "text", "value": "", "label": { "en": "20" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd19", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd20", "type": "text", "value": "", "label": { "en": "21" },
 					"hint": {
@@ -137,11 +207,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd20", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd21", "type": "text", "value": "", "label": { "en": "22" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd21", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd22", "type": "text", "value": "", "label": { "en": "23" },
 					"hint": {
@@ -149,11 +223,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd22", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd23", "type": "text", "value": "", "label": { "en": "24" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd23", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd24", "type": "text", "value": "", "label": { "en": "25" },
 					"hint": {
@@ -161,11 +239,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd24", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd25", "type": "text", "value": "", "label": { "en": "26" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd25", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd26", "type": "text", "value": "", "label": { "en": "27" },
 					"hint": {
@@ -173,11 +255,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd26", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd27", "type": "text", "value": "", "label": { "en": "28" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd27", "type": "label", "value": "", "label": { "en": "data" }
 				},
 				{ "id": "RcCmd28", "type": "text", "value": "", "label": { "en": "29" },
 					"hint": {
@@ -185,11 +271,15 @@
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
 				},
+				{ "id": "DataCmd28", "type": "label", "value": "", "label": { "en": "data" }
+				},
 				{ "id": "RcCmd29", "type": "text", "value": "", "label": { "en": "30" },
 					"hint": {
 						"en": "Change name to give a command a new name. Clear name to delete a command. Note that this may break you flows.",
 						"nl": "Pas de naam aan om het commando te benoemen. Verwijder de naam om een commando te wissen. Let op: dit kan bestaande flows invalide maken."
 					}
+				},
+				{ "id": "DataCmd29", "type": "label", "value": "", "label": { "en": "data" }
 				}
 			]
 		},

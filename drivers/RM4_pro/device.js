@@ -51,29 +51,34 @@ class RM4ProDevice extends BroadlinkDevice {
    * in the datastore are identical to the device settings.
    */
   updateSettings() {
-    let settings = this.getSettings();
-    this._utils.debugLog(null, "**> Current settings before update:", settings);
+    const settings = this.getSettings();
+    this._utils.debugLog(null, '**> Current settings before update:', settings);
 
-    // Clear all settings
-    var idx = 0;
-    let settingName = "RcCmd" + idx;
-    while (settingName in settings) {
-      this.setSettings({ [settingName]: "" });
-      idx++;
-      settingName = "RcCmd" + idx;
+    const names = this.dataStore.getCommandNameList();
+
+    // find the highest existing index among RcCmd*/DataCmd* to know what to clear
+    const indices = Object.keys(settings).flatMap((k) => {
+      const m = k.match(/^(?:RcCmd|DataCmd)(\d+)$/);
+      return m ? [Number(m[1])] : [];
+    });
+    const prevMax = indices.length ? Math.max(...indices) : -1;
+
+    // build a single updates object and clear all slots
+    const updates = { addCommand: '' };
+    for (let i = 0; i <= prevMax; i++) {
+      updates[`RcCmd${i}`] = '';
+      updates[`DataCmd${i}`] = '';
     }
 
-    // Set all settings to dataStore names
-    idx = 0;
-    settingName = "RcCmd" + idx;
-    const updates = {};
-    this.dataStore.getCommandNameList().forEach((s) => {
-      updates[settingName] = s;
-      this._utils.debugLog(null, `**> Setting ${settingName} set to ${s}`);
-      idx++;
-      settingName = "RcCmd" + idx;
+    // fill current commands
+    names.forEach((name, i) => {
+      updates[`RcCmd${i}`] = name;
+      const payload = this._utils.commandEncode(this.dataStore.getCommandData(name));
+      updates[`DataCmd${i}`] = payload;
+      this._utils.debugLog(null, `**> Set RcCmd${i}=${name}, DataCmd${i}=[${payload.length}B]`);
     });
 
+    // save
     this.setSettings(updates)
       .then(() => {
         // Log the updated settings after saving
@@ -184,7 +189,7 @@ class RM4ProDevice extends BroadlinkDevice {
 
     try {
       this.dataStore = new DataStore(this.getData().mac);
-      await this.dataStore.readCommands(async () => {
+      await this.dataStore.readCommands().then(async () => {
         this.updateSettings();
       });
     } catch (err) {
@@ -307,7 +312,7 @@ class RM4ProDevice extends BroadlinkDevice {
 
       this._utils.debugLog(this, `Changed setting key: ${key}, Old value: ${oldName}, New value: ${newName}`);
 
-      if (newName && newName.length > 0) {
+      if (newName && newName.length > 0 && key !== "addCommand") {
         if (oldName && oldName.length > 0) {
           if (this.dataStore.findCommand(newName) >= 0) {
             this._utils.debugLog(this, `Error: Command ${newName} already exists`);
@@ -358,6 +363,31 @@ class RM4ProDevice extends BroadlinkDevice {
           });
         });
       }
+
+      if (key === "addCommand" && newName && newName.length > 0) {
+        var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+        const content = newName
+        if (base64regex.test(content)) {
+          this._utils.debugLog(this, "Add new command");
+          const prefix = (newSettings["cmdType"] === "ir") ? "cmd" : "rf-cmd";
+          const idx = this.dataStore.dataArray.length + 1;
+          const cmdname = prefix + idx;
+          const data = this._utils.commandDecode(content)
+          this.dataStore.addCommand(cmdname, data);
+          // postpone writes until after onSettings returns
+          setImmediate(async () => {
+            try {
+              await this.storeCmdSetting(cmdname);
+              await this.setSettings({ addCommand: "" });
+              await this.updateSettings();
+            } catch (err) {
+              this.error('Failed to run addCommand post-save:', err);
+            }
+          })
+        } else {
+          throw new Error(this.homey.__("errors.base64_incorrect_format", { cmd: newName }));
+        }
+      }
     }
 
     this._utils.debugLog(this, "Settings successfully updated.");
@@ -401,7 +431,7 @@ class RM4ProDevice extends BroadlinkDevice {
         const frequencyBytes = await this._communicate.checkRFData_rm4pro();
         let frequency =
           (frequencyBytes[0] | (frequencyBytes[1] << 8) | (frequencyBytes[2] << 16) | (frequencyBytes[3] << 24)) / 1000.0;
-          
+
           this._utils.debugLog(this, `Frequency: ${frequency} MHz` );
 
           setTimeout(async () => { await this.setWarning(`Frequency: ${frequency} MHz`); setTimeout(async () => { await this.unsetWarning(); }, 1500); }, 0);
